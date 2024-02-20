@@ -9,15 +9,22 @@ function merger_fraction_analysis(mass, separation_inner, debug_flag, save_flag)
 % merger_fraction_analysis(55,20.16,0,0)
 
 % Macros
-dayToYear = 365.24;
+year_to_day = 365.24;
 auToRsun = 215.032;
 
 % Functions
 aout_crit_Mardling = @(ain,Minner,M3)  2.8.*ain.*(1+(M3./Minner)).^(2.0/5);
-% Check following function
-isoMass = @(a,T,M) ((a.^3)*(T.^-2))-M;
-% Maybe calculate Tidal and Hill radius
-% tidal_radius = @(ain,M3) ain.*(M3.^(1.0/3.0));
+
+% From Kepler's law
+isoMass = @(a_out,P_out,M_bin) ((a_out.^3)*(P_out.^-2))-M_bin;
+
+% calculateRocheRadius(Md,Ma)
+%   Roche radius following Eggleton 1983.
+%   Roche radius as seen by star 1, e.g. donor star.
+%   q = Md/Ma
+% Calculate Roche radius
+% roche_radius_inner_binary   = @(a_out,M_bin,M_out) a_out.*calculateRocheRadius(M_bin,M_out);
+% roche_radius_outer_star     = @(a_out,M_bin,M_out) a_out.*calculateRocheRadius(M_out,M_bin);
 
 % Load data
 filename=strcat('../data/Dynamics/m1_',num2str(mass),'.txt');
@@ -45,7 +52,7 @@ num_dots = 1000;
 separation_inner_AU = separation_inner/auToRsun;
 Minner = 2*mass;
 Pdays = [1 5 6 10 30 50 100 500 1000];
-Pyears = Pdays./dayToYear;
+Pyears = Pdays./year_to_day;
 
 if debug_flag
     Pdays(2)
@@ -55,23 +62,35 @@ end
 
 % Evaluate functions
 separation_AU = linspace(0.01,11,num_dots);
-m3_Mardling = logspace(0.0,4,num_dots);
-x_Mardling = aout_crit_Mardling(separation_inner_AU,Minner,m3_Mardling);
+m3_Mardling = logspace(0.0,3,num_dots);
+y_Mardling = aout_crit_Mardling(separation_inner_AU,Minner,m3_Mardling);
 
-% m3_tidal_radius = logspace(log10(0.1),4,num_dots);
-% x_tidal_radius = tidal_radius(separation_inner_AU,m3_tidal_radius);
 
 % Find systems of interest (so that the plot is not crowded over the edges)
 indexOfInterest = find((m3>1 & m3<10^4) & (aout<=10));
 
+limit_indices = find((fraction>0.1)&(fraction<0.2)&(m3>4.0));
+f = fit(m3(limit_indices),aout(limit_indices),'b*x^m');
+
+aout(limit_indices)
+fit_separation_AU   = f.b.*m3(limit_indices).^(f.m)
+fit_m3              = m3(limit_indices);
+fit_period_yr       = sqrt((aout(limit_indices).^3)./(m3(limit_indices)+Minner));
+fit_period_d        = fit_period_yr.*year_to_day
+
+round(m3(limit_indices))
+round(fit_period_d)
+% 
+% f2 = fit(m3(limit_indices),fit_period_d,'b*x^m')
+% 
+% fit_period_d
+% f2.b.*m3(limit_indices).^(f2.m)
+
 % Find intersection stability and tidal radius
 % valueFromPlot = 0.1;
 % indexOfIntersection = find(x_tidal_radius>valueFromPlot);
-% 
 % Bin_aout_crit = aout_crit_Mardling(separation_inner_AU,Minner,m3);
 % fraction(find(aout<Bin_aout_crit-0.01))=0.0;
-% 
-% hill_radius(separation_inner_AU)
 
 % Plot
 solar=char(9737);
@@ -105,22 +124,17 @@ cbar = colorbar;
 cbar.FontSize = fs;
 colormap(flip(pink))
 
-x_Mardling = [0.1 x_Mardling];
+y_Mardling = [0.1 y_Mardling];
 m3_Mardling = [1 m3_Mardling];
-unstableRegion_Mardling = patch([m3_Mardling 10^4*ones(size(m3_Mardling))],[x_Mardling fliplr(x_Mardling)],'k');
+unstableRegion_Mardling = patch([m3_Mardling 10^4*ones(size(m3_Mardling))],[y_Mardling fliplr(y_Mardling)],'k');
 unstableRegion_Mardling.EdgeColor = 'none';
 unstableRegion_Mardling.FaceColor = 0.5.*[1 1 1];
 
-% plot(separation_AU,isoMass(separation_AU, Pyears(2), Minner),'--','LineWidth',lw,'Color',lines2)
-plot(isoMass(separation_AU, Pyears(3), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
-% plot(separation_AU,isoMass(separation_AU, Pyears(5), Minner),'--','LineWidth',lw,'Color',lines2)
+% plot(isoMass(separation_AU, Pyears(2), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
+% plot(isoMass(separation_AU, Pyears(4), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
 plot(isoMass(separation_AU, Pyears(5), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
-text(pos_hor_6_d,pos_ver_6_d,'P_{out} = 6 d','Color',lines6,'Fontsize',fs)
+% text(pos_hor_6_d,pos_ver_6_d,'P_{out} = 6 d','Color',lines6,'Fontsize',fs)
 text(pos_hor_30_d,pos_ver_30_d,'P_{out} = 30 d','Color',lines6,'Fontsize',fs)
-
-% plot(hill_radius(separation_inner_AU),separation_AU,':k','LineWidth',lw)
-% plot(x_tidal_radius,m3_tidal_radius,':w','LineWidth',lw)
-% text(0.14,10,'r_{t}','Color','w','Fontsize',fs)
 
 % xlabel(['M_3/M_',solar])
 ylabel('a_{out}/AU')
@@ -149,29 +163,30 @@ colormap(flip(pink))
 scatter(m3(indexOfInterest),aout(indexOfInterest),sz,fraction(indexOfInterest),'s','Filled')
 cbar.Label.String = 'f_{contact}';
 
-x_Mardling = [0.1 x_Mardling];
+y_Mardling = [0.1 y_Mardling];
 m3_Mardling = [1 m3_Mardling];
-unstableRegion_Mardling = patch([m3_Mardling 10^4*ones(size(m3_Mardling))],[x_Mardling fliplr(x_Mardling)],'k');
+unstableRegion_Mardling = patch([m3_Mardling 10^4*ones(size(m3_Mardling))],[y_Mardling fliplr(y_Mardling)],'k');
 unstableRegion_Mardling.EdgeColor = 'none';
 unstableRegion_Mardling.FaceColor = 0.5.*[1 1 1];
 
-% plot(separation_AU,isoMass(separation_AU, Pyears(2), Minner),'--','LineWidth',lw,'Color',lines2)
-plot(isoMass(separation_AU, Pyears(3), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
-% plot(separation_AU,isoMass(separation_AU, Pyears(5), Minner),'--','LineWidth',lw,'Color',lines2)
+% plot(isoMass(separation_AU, Pyears(2), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
+% plot(isoMass(separation_AU, Pyears(4), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
 plot(isoMass(separation_AU, Pyears(5), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
-text(pos_hor_6_d,pos_ver_6_d,'P_{out} = 6 d','Color',lines6,'Fontsize',fs)
+% text(pos_hor_6_d,pos_ver_6_d,'P_{out} = 6 d','Color',lines6,'Fontsize',fs)
 text(pos_hor_30_d,pos_ver_30_d,'P_{out} = 30 d','Color',lines6,'Fontsize',fs)
 
-% yline(hill_radius(separation_inner_AU))
-% plot(x_tidal_radius,m3_tidal_radius,':w','LineWidth',lw)
-% text(0.14,10,'r_{t}','Color','w','Fontsize',fs)
 
+% plot(m3(limit_indices),aout(limit_indices),'k')
 % xlabel(['M_3/M_',solar])
 ylabel('a_{out}/AU')
 
 text(pos_hor,pos_wide,['Wide',newline,'Triples'],'Color','k','Fontsize',fs)
 text(pos_hor,pos_close,['Close',newline,'Triples'],'Color','w','Fontsize',fs)
 text(pos_hor,pos_unst,['Dynamically',newline,'Unstable'],'Color','w','Fontsize',fs)
+
+% if debug_flag
+%     plot(m3(limit_indices),f.b.*m3(limit_indices).^(f.m),'k')
+% end
 
 ax1 = gca;
 ax1.FontSize = fs;
@@ -192,21 +207,17 @@ colormap(flip(pink))
 scatter(m3(indexOfInterest),aout(indexOfInterest),sz,log10(tauKL(indexOfInterest)),'s','Filled')
 cbar.Label.String = 'log_{10} (\tau_{ZLK}/yr)';
 
-x_Mardling = [0.1 x_Mardling];
+y_Mardling = [0.1 y_Mardling];
 m3_Mardling = [1 m3_Mardling];
-unstableRegion_Mardling = patch([m3_Mardling 10^4*ones(size(m3_Mardling))],[x_Mardling fliplr(x_Mardling)],'k');
+unstableRegion_Mardling = patch([m3_Mardling 10^4*ones(size(m3_Mardling))],[y_Mardling fliplr(y_Mardling)],'k');
 unstableRegion_Mardling.EdgeColor = 'none';
 unstableRegion_Mardling.FaceColor = 0.5.*[1 1 1];
 
-% plot(separation_AU,isoMass(separation_AU, Pyears(2), Minner),'--','LineWidth',lw,'Color',lines2)
-plot(isoMass(separation_AU, Pyears(3), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
-% plot(separation_AU,isoMass(separation_AU, Pyears(5), Minner),'--','LineWidth',lw,'Color',lines2)
+% plot(isoMass(separation_AU, Pyears(2), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
+% plot(isoMass(separation_AU, Pyears(4), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
 plot(isoMass(separation_AU, Pyears(5), Minner),separation_AU,'-','LineWidth',lw,'Color',lines6)
-text(pos_hor_6_d,pos_ver_6_d,'P_{out} = 6 d','Color',lines6,'Fontsize',fs)
+% text(pos_hor_6_d,pos_ver_6_d,'P_{out} = 6 d','Color',lines6,'Fontsize',fs)
 text(pos_hor_30_d,pos_ver_30_d,'P_{out} = 30 d','Color',lines6,'Fontsize',fs)
-
-% plot(x_tidal_radius,m3_tidal_radius,':w','LineWidth',lw)
-% text(0.14,10,'r_{t}','Color','w','Fontsize',fs)
 
 xlabel(['M_3/M_',solar])
 ylabel('a_{out}/AU')
