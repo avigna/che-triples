@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# %%
 """
 Created on Tue Mar 29 16:58:54 2022
 
@@ -14,14 +15,21 @@ from matplotlib import rc
 from scipy.optimize import fsolve
 import matplotlib.colors as colors
 rc('text', usetex=False)
-#%%
-#%%
+from astropy import constants as const
+# %%
+# %%
 #define constants
-c=2.99792458e10
-msun=2e33
-G=6.674e-8
-au=1.5e13
-rsun = 6.9e10
+# c=2.99792458e10
+# msun=2e33
+# G=6.674e-8
+# au=1.5e13
+# rsun = 6.9e10
+
+c=const.c.cgs.value
+msun=const.M_sun.cgs.value
+G=const.G.cgs.value
+au=const.au.cgs.value
+rsun=const.R_sun.cgs.value
 
 # define some useful quantities
 
@@ -62,7 +70,7 @@ def eps_tide(m1,m2,m3,a1,a2,e2, r1, r2, k1, k2):
 def eps_oct(m1,m2,a1,a2,e2):
     return (m1-m2)/(m1+m2)* (a1/a2) * e2/(1-e2**2)
 
-#%%
+# %%
 # calculate the maximal eccentricity according to Mangipudi et al., 2022 and the appendix with tides
 def get_ecc(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2, cos_inc):
     cosi_0 = cos_inc
@@ -91,7 +99,7 @@ def get_ecc(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2, cos_inc):
 
 print (get_ecc(50, 50, 200, 0.2, 1, 0, 7/214, 7/214, 0.001, 0,0 ))
 
-#%%
+# %%
 import matplotlib
 #plot e_max for a particular choice of inclination cosinc - set e_maxplot = True
 #plot fractions of collisoins - uniform in cos inc with Ni inclinations
@@ -99,12 +107,16 @@ import matplotlib
 #the outer grid of masses and separations is of size NN x NN
 
 #the system is colliding if the pericentre r_p < 1.3 * (r1+r2)
-def plot_grids(NN, Ni, period,r1,r2,k1,k2, cosinc,col):
+# AVG: double check this previous condition
+def plot_grids(NN, Ni,period,m1,m2,r1,r2,k1,k2,cosinc,col):
+    # AVG: explain all things here
+    # AVG: probably better a script to first calculate the grid and another to then plot
     e_maxplot = True
     fraction_plot = True
 
-    m1=70; m2=70; 
-    a1 = (G*(m1+m2)*msun * (period * 86400)**2/4/3.14/3.14)**0.3333/au
+#     m1=70; m2=70; 
+    # Change 86400 to a constant
+    a1 = (G*(m1+m2)*msun * (period * 86400)**2/4/np.pi/np.pi)**0.3333/au
     r1 = r1 * rsun / au; r2 = r2 * rsun / au
     m3 = np.logspace(0,4,NN)
     a2 = np.logspace(np.log10(a1) + np.log10(2), np.log10(a1)+ np.log10(300), NN)
@@ -154,9 +166,6 @@ def plot_grids(NN, Ni, period,r1,r2,k1,k2, cosinc,col):
  #   plt.text(4,150 + 60*cosinc, str(cosinc), color=col)
     return eccs, rps, fraction
 
-NN=40; Ni=30; r1=8; r2=8
-res = plot_grids(NN,Ni, 2,r1,r2,0.01,0.01, 0.5, 'red')
-
 # #%%
 # NN=10
 # a1=0.16
@@ -189,3 +198,9 @@ res = plot_grids(NN,Ni, 2,r1,r2,0.01,0.01, 0.5, 'red')
 # plt.ylabel(r'$log_{10}\ m_3 / \rm M_\odot$')
 # plt.text(1.5,4.1, r'$f_{\rm contact}$')
 # plt.subplots_adjust(left=0.15, bottom=0.16, right=0.97, top=0.92)
+
+# %%
+NN=40; Ni=30; r1=10; r2=10; m1=45; m2=45; k1=0.02; k2=0.02;
+res = plot_grids(NN,Ni,2,m1,m2,r1,r2,k1,k2,0.5, 'red')
+
+# %%
