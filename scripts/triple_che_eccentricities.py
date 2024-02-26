@@ -9,6 +9,7 @@ Created on Tue Mar 29 16:58:54 2022
 import pandas as pd
 import numpy as np
 import math
+import matplotlib
 from scipy.interpolate import interp1d
 from matplotlib import pyplot as plt
 from matplotlib import rc
@@ -99,8 +100,8 @@ def get_ecc(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2, cos_inc):
 
 print (get_ecc(50, 50, 200, 0.2, 1, 0, 7/214, 7/214, 0.001, 0,0 ))
 
+
 # %%
-import matplotlib
 #plot e_max for a particular choice of inclination cosinc - set e_maxplot = True
 #plot fractions of collisoins - uniform in cos inc with Ni inclinations
 # set fraction_plot = True
