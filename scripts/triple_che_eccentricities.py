@@ -125,25 +125,24 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2, cos_inc, de
 
 
 # %%
-# Testing data. Probably should be deleted when everything is working.
-NN=20; Ni=15; period_days=0.8; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
-ain = 0.07559;
-print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
-print()
-print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
-print()
-print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
-print()
-print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
-
+# # Testing data. Probably should be deleted when everything is working.
+# NN=20; Ni=15; period_days=0.8; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
+# ain = 0.07559;
+# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+# print()
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+# print()
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+# print()
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
 
 # %%
 # ALEJANDRO: this function I still need to check/clean
@@ -176,17 +175,19 @@ def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
 #     a2 = np.logspace(np.log10(a1) + np.log10(2), np.log10(a1)+ np.log10(300), NN)    
     # ALEJANDRO: what is with the np.log10(2)?
     a2 = np.logspace(np.log10(0.1), np.log10(10), NN)    
-
-    if debug:
-        print("r1 and r2:",r1,r2)
-        print("a1, a2min, a2max:",a1,np.min(a2),np.max(a2))
-        print("m3min and m3max:",np.min(m3),np.max(m3))
-
     eccs = np.zeros(shape=[NN,NN])
     # ALEJANDRO: what is rps?
     rps = np.zeros(shape=[NN,NN])
     fraction = np.zeros(shape=[NN,NN])
     cos_incs=np.linspace(-1,1,Ni)
+    
+    tertiary_mass = np.zeros(shape=[NN,NN])
+    outer_separation = np.zeros(shape=[NN,NN])
+    
+    if debug:
+        print("r1 and r2:",r1,r2)
+        print("a1, a2min, a2max:",a1,np.min(a2),np.max(a2))
+        print("m3min and m3max:",np.min(m3),np.max(m3))
 
     for i in range(0,NN):
         if debug:
@@ -194,125 +195,44 @@ def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
         for j in range(0,NN):
             # ALEJANDRO: what is the next lines for? I don't get why we need to user define a cos_inc 
             # if later we will explore the cos_inc parameter space 
+            tertiary_mass[i,j] = m3[i]
+            outer_separation[i,j] = a2[j]
             eccs[i,j] = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], 0, r1 ,r2, k1, k2, cos_inc, False) 
             rps[i,j] = a1 * (1 - eccs[i,j]) * au / rsun # ALEJANDRO: Why does rps needs to be in Rsun?
-            # ALEJANDRO: also, later you don't use rps, but you give it back
-            print(rps[i,j])
             counter=0
             for k in range(0,Ni):
                 ec = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], 0, r1 ,r2, k1, k2, cos_incs[k], False)
                 rpp = a1 * (1 - ec) 
 #                 print("rpp=",rpp)
-
-                if rpp/1.3/(r1+r2)<=1:
-#                 if 0.5002*rpp/r1 >= 1:
+#                 if rpp/1.3/(r1+r2)<=1:
+                if 0.5002*rpp/r1 < 1:
 #                 if r1 >= 0.5002*rpp or r2 >= 0.5002*rpp:
                     counter=counter+1
 
             fraction[i,j] = counter/Ni       
-        
-# ALEJANDRO: From here on, I would delete all comments
-                
-#     e_maxplot = True
-#     fraction_plot = True
 
-#     plt.rc('text', usetex=False)
-#     matplotlib.rcParams.update({'font.size': 20})
-#     if e_maxplot:
-# #         plt.contourf(np.log10(m3), np.log10(a2), eccs, levels=np.linspace(0,1,21))
-# #         plt.xlabel(r'$\log m_3 / \rm M_\odot$')
-# #         plt.ylabel(r'$\log a_2 / \rm au$')
-#         plt.xlabel(r'$m_3 / \rm M_\odot$')
-#         plt.ylabel(r'$a_2 / \rm au$')
-#         plt.xscale('log')
-#         plt.yscale('log')
-#         plt.contourf(m3, a2, eccs)
-#         plt.text(2.03, 1., r'$e_{\rm max}$')
-#         plt.colorbar()
-# #         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
+    return tertiary_mass, outer_separation, eccs, rps, fraction
 
-#     #   plt.contour((a2), np.log10(m3), rps/(r1+r2) * rsun/au, [1.3], colors=col) #[2,2.5,3,3.5,4,4.5])
-#     if fraction_plot:
-#         plt.figure(2)
-# #         plt.contourf(np.log10(m3), np.log10(a2), fraction) #[2,2.5,3,3.5,4,4.5])
-# #         plt.xlabel(r'$\log m_3 / \rm M_\odot$')
-# #         plt.ylabel(r'$\log a_2 / \rm au$')
-#         plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
-#         plt.xlabel(r'$m_3 / \rm M_\odot$')
-#         plt.ylabel(r'$a_2 / \rm au$')
-#         plt.xscale('log')
-#         plt.yscale('log')
-#         plt.text(2.02, 1., 'fraction')        
-#         plt.colorbar()
-# #         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
-
-
-    #  plt.colorbar(format="%.2f")
- #   plt.text(4,150 + 60*cosinc, str(cosinc), color=col)
-    return m3, a2, eccs, rps, fraction
-
-# ALEJANDRO: can I erase the following lines?
-# ALEJANDRO: maybe we can use the Tory formula and move it to functions
-# #%%
-# NN=10
-# a1=0.16
-# m3 = np.logspace(-0,4,NN)
-# a2 = np.logspace(np.log10(a1) + np.log10(2), np.log10(a1)+ np.log10(300), NN)
-# m3_h=[140/24*(x/a1)**3 for x in a2]
-# m_mardling = [140*(1 + (x/2.8/a1)**2.5 ) for x in a2]
-# def f_tory(q):
-#     return 10**(-0.6+0.04*q) * q **(0.32+0.1*q)
-
-# q_m = [140/x for x in m3]
-# ff = [f_tory(qq) for qq in q_m]
-# a2_tory = [max(-1, a1/f) for f in ff]
-# #plt.plot([np.log10(x) for x in np.logspace(-6,0,100)], [(f_tory(x)) for x in np.logspace(-6,0,100)])
-# #plt.ylim([0,3])
-# #plt.xlim([-1,2])
-
-# #%%
-
-# plt.contour(np.log10(a2), np.log10(m3), (res[0]+0*1e-2),levels=np.linspace(0.01,0.81,9), cmap='RdBu') #[2,2.5,3,3.5,4,4.5])
-# plt.colorbar()
-# plt.plot(np.log10(a2),np.log10(m3_h), linewidth=3, color='gray')
-# plt.plot(np.log10(a2_tory), np.log10(m3), linewidth=3)
-# plt.plot(np.log10(a2),np.log10(m_mardling), linewidth=3, color='k')
-# plt.axvline(np.log10(2.2*a1), color='red', linewidth=3)
-# #plt.plot(np.log10(a2), np.log10(m3_h), color='k', linewidth='3')
-# plt.ylim([0.,4])
-# plt.xlim([-0.5,1.7])
-# plt.xlabel(r'$\log_{10}\ a_2 / \rm au$')
-# plt.ylabel(r'$log_{10}\ m_3 / \rm M_\odot$')
-# plt.text(1.5,4.1, r'$f_{\rm contact}$')
-# plt.subplots_adjust(left=0.15, bottom=0.16, right=0.97, top=0.92)
 
 # %%
-NN=20; Ni=15; 
-period_days=0.8; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
-ain = 0.07559;
-m3, a2, eccs, rps, fraction = plot_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, True)
+# CALCULATE
+NN=40; Ni=30; 
+period_days=1; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
+m3, a2, eccs, rps, fraction = plot_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, False)
 
-# %%
-# Plot
+# PLOT
 plt.rc('text', usetex=False)
 matplotlib.rcParams.update({'font.size': 20})
-
-#         plt.contourf(np.log10(m3), np.log10(a2), eccs, levels=np.linspace(0,1,21))
-#         plt.xlabel(r'$\log m_3 / \rm M_\odot$')
-#         plt.ylabel(r'$\log a_2 / \rm au$')
+plt.contourf(m3, a2, eccs)
 plt.xlabel(r'$m_3 / \rm M_\odot$')
 plt.ylabel(r'$a_2 / \rm au$')
 plt.xscale('log')
 plt.yscale('log')
-plt.contourf(m3, a2, eccs)
 plt.text(2.03, 1., r'$e_{\rm max}$')
 plt.colorbar()
 #         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
 
 plt.figure(2)
-#         plt.contourf(np.log10(m3), np.log10(a2), fraction) #[2,2.5,3,3.5,4,4.5])
-#         plt.xlabel(r'$\log m_3 / \rm M_\odot$')
-#         plt.ylabel(r'$\log a_2 / \rm au$')
 plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
 plt.xlabel(r'$m_3 / \rm M_\odot$')
 plt.ylabel(r'$a_2 / \rm au$')
@@ -323,5 +243,26 @@ plt.colorbar()
 #         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
 
 # %%
+# Plot
+plt.rc('text', usetex=False)
+matplotlib.rcParams.update({'font.size': 20})
+plt.contourf(m3, a2, eccs)
+plt.xlabel(r'$m_3 / \rm M_\odot$')
+plt.ylabel(r'$a_2 / \rm au$')
+plt.xscale('log')
+plt.yscale('log')
+plt.text(2.03, 1., r'$e_{\rm max}$')
+plt.colorbar()
+#         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
+
+plt.figure(2)
+plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
+plt.xlabel(r'$m_3 / \rm M_\odot$')
+plt.ylabel(r'$a_2 / \rm au$')
+plt.xscale('log')
+plt.yscale('log')
+plt.text(2.02, 1., 'fraction')        
+plt.colorbar()
+#         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
 
 # %%
