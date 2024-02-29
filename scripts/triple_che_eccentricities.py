@@ -10,13 +10,14 @@ import pandas as pd
 import numpy as np
 import math
 import matplotlib
+import matplotlib.colors as colors
 from scipy.interpolate import interp1d
 from matplotlib import pyplot as plt
 from matplotlib import rc
 from scipy.optimize import fsolve
-import matplotlib.colors as colors
-rc('text', usetex=False)
 from astropy import constants as const
+from scipy.io import savemat
+# rc('text', usetex=False)
 # %%
 # CONSTANTS
 c          = const.c.cgs.value                # speed of light (c) in cgs
@@ -114,7 +115,7 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2, cos_inc, de
     
     def dH(e_m, eta = ETA, eps_SA = eps_SA1, cosi_0 = cosi_0):
         return ( ((1 + (cosi_0 + eta/2)*eta)/(np.sqrt(3/5) + np.sqrt(1 - e_m**2)*eta))*(9/8)*eps_SA*e_m  )* \
-            ( np.sqrt(1 - e_m**2) - ((2*e_m**2 - 1)/2)*(((1 + (cosi_0 + eta/2)*eta)/(np.sqrt(3/5) + np.sqrt(1 - e_m**2)*eta))*(9/8)*eps_SA   )  )
+            ( np.sqrt(1 - e_m**2) - ((2*e_m**2 - 1)/2)*(((1 + (cosi_0 + eta/2)*eta)/(np.sqrt(3/5) + np.sqrt(1 - e_m**2)*eta))*(9/8)*eps_SA))
     da = dH(e_m=0.5)
     
     if a < 0:
@@ -125,33 +126,30 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2, cos_inc, de
 
 
 # %%
-# # Testing data. Probably should be deleted when everything is working.
-# NN=20; Ni=15; period_days=0.8; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
-# ain = 0.07559;
-# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
-# print()
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
-# print()
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
-# print()
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+# Testing data. Probably should be deleted when everything is working.
+NN=20; Ni=15; period_days=0.8; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
+ain = 0.07559;
+print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+print()
+print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+print()
+print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+print(get_maximal_eccentricity(m1, m2, 90, ain, 5, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+print()
+print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 0, 1))
+print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, -1, 1))
+print(get_maximal_eccentricity(m1, m2, 90, ain, 10, 0, r1*rsun_to_au, r2*rsun_to_au, k1, k2, 1, 1))
+
 
 # %%
 # ALEJANDRO: this function I still need to check/clean
 # plot e_max for a particular choice of inclination cosinc - set e_maxplot = True
-# plot fractions of collisoins - uniform in cos inc with Ni inclinations
-# set fraction_plot = True
-# the outer grid of masses and separations is of size NN x NN
-
-#the system is colliding if the pericentre r_p < 1.3 * (r1+r2)
+# the system is colliding if the pericentre r_p < 1.3 * (r1+r2)
 # ALEJANDRO: double check this previous condition
 # the system enters a contact phase if the radius reaches the second lagrangian point
 # L2 = 1.32*R_{RL}, which for an equal-mass binary results in
@@ -160,18 +158,17 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2, cos_inc, de
 # 0.5002r_p/r1 < 1
 
 def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
-    # NN and Ni are ...
+    # NN x NN is the size of the outer grid of masses and separations
+    # Ni is the number of uniform realisation in cos(inclination)
     # period is the orbital period of the inner binary
     # [period]=days
     # [m1]=[m2]=Msun
     # [r1]=[r2]=Rsun
     # [k1]=[k2]=adim
     # [cos_inc]=adim
-    # AVG: explain all things here
-    # AVG: probably better a script to first calculate the grid and another to then plot
-    a1 = (G*(m1+m2)*msun * (period * day_to_s)**2/4/np.pi/np.pi)**0.3333/au # [a1]=au?
+    a1 = (G*(m1+m2)*msun * (period * day_to_s)**2/4/np.pi/np.pi)**0.3333/au # [a1]=au
     r1 = r1 * rsun / au; r2 = r2 * rsun / au # [r1]=[r2]=au
-    m3 = np.logspace(0,2,NN) # [m3]=Msun
+    m3 = np.logspace(0,np.log10(200),NN) # [m3]=Msun
 #     a2 = np.logspace(np.log10(a1) + np.log10(2), np.log10(a1)+ np.log10(300), NN)    
     # ALEJANDRO: what is with the np.log10(2)?
     a2 = np.logspace(np.log10(0.1), np.log10(10), NN)    
@@ -180,7 +177,6 @@ def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
     rps = np.zeros(shape=[NN,NN])
     fraction = np.zeros(shape=[NN,NN])
     cos_incs=np.linspace(-1,1,Ni)
-    
     tertiary_mass = np.zeros(shape=[NN,NN])
     outer_separation = np.zeros(shape=[NN,NN])
     
@@ -216,10 +212,32 @@ def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
 
 # %%
 # CALCULATE
-NN=40; Ni=30; 
+# NN=40; Ni=30; 
+NN=50; Ni=30; 
 period_days=1; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
 m3, a2, eccs, rps, fraction = plot_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, False)
 
+# # PLOT
+# plt.rc('text', usetex=False)
+# matplotlib.rcParams.update({'font.size': 20})
+# plt.contourf(m3, a2, eccs)
+# plt.xlabel(r'$m_3 / \rm M_\odot$')
+# plt.ylabel(r'$a_2 / \rm au$')
+# plt.xscale('log')
+# plt.yscale('log')
+# plt.text(2.03, 1., r'$e_{\rm max}$')
+# plt.colorbar()
+
+# plt.figure(2)
+# plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
+# plt.xlabel(r'$m_3 / \rm M_\odot$')
+# plt.ylabel(r'$a_2 / \rm au$')
+# plt.xscale('log')
+# plt.yscale('log')
+# plt.text(2.02, 1., 'fraction')        
+# plt.colorbar()
+
+# %%
 # PLOT
 plt.rc('text', usetex=False)
 matplotlib.rcParams.update({'font.size': 20})
@@ -230,7 +248,6 @@ plt.xscale('log')
 plt.yscale('log')
 plt.text(2.03, 1., r'$e_{\rm max}$')
 plt.colorbar()
-#         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
 
 plt.figure(2)
 plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
@@ -240,29 +257,10 @@ plt.xscale('log')
 plt.yscale('log')
 plt.text(2.02, 1., 'fraction')        
 plt.colorbar()
-#         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
 
 # %%
-# Plot
-plt.rc('text', usetex=False)
-matplotlib.rcParams.update({'font.size': 20})
-plt.contourf(m3, a2, eccs)
-plt.xlabel(r'$m_3 / \rm M_\odot$')
-plt.ylabel(r'$a_2 / \rm au$')
-plt.xscale('log')
-plt.yscale('log')
-plt.text(2.03, 1., r'$e_{\rm max}$')
-plt.colorbar()
-#         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
-
-plt.figure(2)
-plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
-plt.xlabel(r'$m_3 / \rm M_\odot$')
-plt.ylabel(r'$a_2 / \rm au$')
-plt.xscale('log')
-plt.yscale('log')
-plt.text(2.02, 1., 'fraction')        
-plt.colorbar()
-#         plt.subplots_adjust(left=0.18, bottom=0.15, right=0.97, top=0.93)
+# m3, a2, eccs, rps, fraction 
+mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "fraction":fraction}
+savemat("triple_CHE_45_Msun.mat", mdic)
 
 # %%
