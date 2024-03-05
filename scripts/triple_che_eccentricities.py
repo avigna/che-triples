@@ -39,6 +39,23 @@ def period_ratio(m1, m2, m3, a1, a2):
     m_tot = m_bin + m3
     return (a1/a2)**1.5 * (m_tot/m_bin)**0.5
 
+# second timescale - 1st order (no dependence on inclination)
+# initialise with au and msun
+def t_sec(m1, m2, m3, a1, a2, e2):
+# use cgs units
+    m1 = m1 * msun	
+    m2 = m2 * msun	
+    m3 = m3 * msun	
+    a1 = a1 * au	
+    a2 = a2 * au	
+
+    mu_in = m1*m2/(m1+m2)
+    m_bin = (m1+m2) 
+    L1 = mu_in * (G * m_bin * a1)**0.5
+    C = G * mu_in * m3/8/a2/(1-e2**2)**1.5 * (a1/a2)**2
+    
+    return L1 / 6 / C
+    
 # how bad the double averaging is (e.g. Grishin, Perets and Fragione 2018; Luo et al., 2016)
 def epsilon_sa(m1, m2, m3, a1, a2, e2):
     # e2 is the eccentricity of the outer orbit
