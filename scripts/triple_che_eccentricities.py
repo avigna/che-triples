@@ -40,14 +40,15 @@ def period_ratio(m1, m2, m3, a1, a2):
     return (a1/a2)**1.5 * (m_tot/m_bin)**0.5
 
 # second timescale - 1st order (no dependence on inclination)
-# initialise with au and msun
 def t_sec(m1, m2, m3, a1, a2, e2):
-# use cgs units
-    m1 = m1 * msun	
-    m2 = m2 * msun	
-    m3 = m3 * msun	
-    a1 = a1 * au	
-    a2 = a2 * au	
+    # [m1]=[m2]=[m3]=Msun
+    # [a1]=[a2]=au
+    # [t_sec]=s
+    m1 = m1 * msun
+    m2 = m2 * msun
+    m3 = m3 * msun
+    a1 = a1 * au
+    a2 = a2 * au
 
     mu_in = m1*m2/(m1+m2)
     m_bin = (m1+m2) 
@@ -190,12 +191,13 @@ def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
     # ALEJANDRO: what is with the np.log10(2)?
     a2 = np.logspace(np.log10(0.1), np.log10(10), NN)    
     eccs = np.zeros(shape=[NN,NN])
-    # ALEJANDRO: what is rps?
+    # ALEJANDRO: what is rps? I know is RPeriapsiS?
     rps = np.zeros(shape=[NN,NN])
     fraction = np.zeros(shape=[NN,NN])
     cos_incs=np.linspace(-1,1,Ni)
     tertiary_mass = np.zeros(shape=[NN,NN])
     outer_separation = np.zeros(shape=[NN,NN])
+    secular_timescale = np.zeros(shape=[NN,NN])    
     
     if debug:
         print("r1 and r2:",r1,r2)
@@ -210,6 +212,7 @@ def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
             # if later we will explore the cos_inc parameter space 
             tertiary_mass[i,j] = m3[i]
             outer_separation[i,j] = a2[j]
+            secular_timescale[i,j]  = t_sec(m1, m2, m3[i], a1, a2[j], 0.0)
             eccs[i,j] = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], 0, r1 ,r2, k1, k2, cos_inc, False) 
             rps[i,j] = a1 * (1 - eccs[i,j]) * au / rsun # ALEJANDRO: Why does rps needs to be in Rsun?
             counter=0
@@ -224,35 +227,20 @@ def plot_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
 
             fraction[i,j] = counter/Ni       
 
-    return tertiary_mass, outer_separation, eccs, rps, fraction
+    return tertiary_mass, outer_separation, eccs, rps, fraction, secular_timescale
 
 
 # %%
 # CALCULATE
 # NN=40; Ni=30; 
-NN=50; Ni=30; 
-period_days=1; m1=45; m2=45; r1=7; r2=7; k1=0.02; k2=0.02;
-m3, a2, eccs, rps, fraction = plot_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, False)
+NN=100; 
+Ni=40; 
+period_days=1; m1=55; m2=55; r1=7; r2=7; k1=0.024; k2=0.024;
+# period_days=1; m1=55; m2=55; r1=7; r2=7; k1=0.0; k2=0.0;
+m3, a2, eccs, rps, fraction, tau_ZKL = plot_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, False)
 
-# # PLOT
-# plt.rc('text', usetex=False)
-# matplotlib.rcParams.update({'font.size': 20})
-# plt.contourf(m3, a2, eccs)
-# plt.xlabel(r'$m_3 / \rm M_\odot$')
-# plt.ylabel(r'$a_2 / \rm au$')
-# plt.xscale('log')
-# plt.yscale('log')
-# plt.text(2.03, 1., r'$e_{\rm max}$')
-# plt.colorbar()
-
-# plt.figure(2)
-# plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
-# plt.xlabel(r'$m_3 / \rm M_\odot$')
-# plt.ylabel(r'$a_2 / \rm au$')
-# plt.xscale('log')
-# plt.yscale('log')
-# plt.text(2.02, 1., 'fraction')        
-# plt.colorbar()
+mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "fraction":fraction, "tau_ZKL":tau_ZKL}
+savemat("triple_Z_0_0001_CHE_55_Msun_k_0.mat", mdic)
 
 # %%
 # PLOT
@@ -276,8 +264,5 @@ plt.text(2.02, 1., 'fraction')
 plt.colorbar()
 
 # %%
-# m3, a2, eccs, rps, fraction 
-mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "fraction":fraction}
-savemat("triple_CHE_45_Msun.mat", mdic)
 
 # %%
