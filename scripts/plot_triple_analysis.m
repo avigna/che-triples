@@ -39,9 +39,9 @@ if choice==1
     title_string    = 'M_1=M_2=55 Msun, Z=0.0001, k=0';
     plot_label      = '../plots/triple_Z_0_0001_CHE_55_Msun_k_0.png';
 elseif choice==2
-    fileName        = '../data/dynamics/triple_Z_0_0001_CHE_55_Msun_k_0_024.mat';
+    fileName        = 'triple_Z_0_0001_CHE_55_Msun_SA_GR_Tides.mat';
     title_string    = 'M_1=M_2=55 Msun, Z=0.0001, k=0.024';
-    plot_label      = '../plots/triple_Z_0_0001_CHE_55_Msun_k_0_024.png';  
+    plot_label      = '../plots/triple_Z_0_0001_CHE_55_Msun_SA_GR_Tides.png';  
 else
     disp("Faulty choice.")
 end
@@ -127,7 +127,7 @@ limit_indices = find((fraction>0.1)&(fraction<0.2)&(m3>4.0));
 
 % Plot
 solar=char(9737);
-sz = 40.0;
+sz = 120.0;
 lw=2.0;
 fs=14;
 

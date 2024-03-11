@@ -105,10 +105,6 @@ def epsilon_oct(m1, m2, a1, a2, e2):
 
 # %%
 # calculate the maximal eccentricity according to Mangipudi et al. 2022 and the appendix with tides
-# eps_GR1   = epsilon_gr(m1, m2, m3, a1, a2, e2)
-# eps_SA1   = epsilon_sa(m1, m2, m3, a1, a2, e2)
-# eps_Tide1 = epsilon_tide(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2)
-    
 def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1, cos_inc, debug):
     # [m1]=[m2]=[m3]=Msun
     # [a1]=[a2]=au
@@ -148,42 +144,41 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1
 
 
 # %%
-# Testing data. Probably should be deleted when everything is working.
-m1=55
-m2=55
-r1=7 
-r2=7 
-k1=0.02
-k2=0.02
-ain = 0.07559
-period_days=0.8
+# # Testing data. Probably should be deleted when everything is working.
+# m1=55
+# m2=55
+# r1=7 
+# r2=7 
+# k1=0.02
+# k2=0.02
+# ain = 0.07559
+# period_days=0.8
 
-# get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1, cos_inc, debug)
+# # get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1, cos_inc, debug)
 
-eps_GR1   = epsilon_gr(m1, m2, 45, ain, 0.3, 0.0)
-eps_SA1   = epsilon_sa(m1, m2, 45, ain, 0.3, 0.0)
-eps_Tide1 = epsilon_tide(m1, m2, 45, ain, 0.3, 0.0, r1, r2, k1, k2)
-print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
-print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
-print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
-print()
-eps_GR1   = epsilon_gr(m1, m2, 90, ain, 0.3, 0.0)
-eps_SA1   = epsilon_sa(m1, m2, 90, ain, 0.3, 0.0)
-eps_Tide1 = epsilon_tide(m1, m2, 90, ain, 0.3, 0.0, r1, r2, k1, k2)
-print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
-print()
-eps_GR1   = epsilon_gr(m1, m2, 90, ain, 10.0, 0.0)
-eps_SA1   = epsilon_sa(m1, m2, 90, ain, 10.0, 0.0)
-eps_Tide1 = epsilon_tide(m1, m2, 90, ain, 10.0, 0.0, r1, r2, k1, k2)
-print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
-print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
-
+# eps_GR1   = epsilon_gr(m1, m2, 45, ain, 0.3, 0.0)
+# eps_SA1   = epsilon_sa(m1, m2, 45, ain, 0.3, 0.0)
+# eps_Tide1 = epsilon_tide(m1, m2, 45, ain, 0.3, 0.0, r1, r2, k1, k2)
+# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
+# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
+# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
+# print()
+# eps_GR1   = epsilon_gr(m1, m2, 90, ain, 0.3, 0.0)
+# eps_SA1   = epsilon_sa(m1, m2, 90, ain, 0.3, 0.0)
+# eps_Tide1 = epsilon_tide(m1, m2, 90, ain, 0.3, 0.0, r1, r2, k1, k2)
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
+# print()
+# eps_GR1   = epsilon_gr(m1, m2, 90, ain, 10.0, 0.0)
+# eps_SA1   = epsilon_sa(m1, m2, 90, ain, 10.0, 0.0)
+# eps_Tide1 = epsilon_tide(m1, m2, 90, ain, 10.0, 0.0, r1, r2, k1, k2)
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
+# print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
 
 # %%
-def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
+def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, incl_GR, incl_Tides, debug):
     # NN x NN is the size of the outer grid of masses and separations
     # Ni is the number of uniform realisation in cos(inclination)
     # period is the orbital period of the inner binary
@@ -192,6 +187,9 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
     # [r1]=[r2]=Rsun
     # [k1]=[k2]=adim
     # [cos_inc]=adim
+    # incl_SA is a boolean that if true calculates epsilon_SA and otherwise sets it to zero
+    # incl_GR is a boolean that if true calculates incl_GR and otherwise sets it to zero
+    # incl_Tide is a boolean that if true calculates incl_Tide and otherwise sets it to zero
     e2 = 0.0
     a1 = (G*(m1+m2)*msun * (period * day_to_s)**2/4/np.pi/np.pi)**0.3333/au # [a1]=au
     r1 = r1 * rsun / au; r2 = r2 * rsun / au # [r1]=[r2]=au
@@ -209,7 +207,7 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
     secular_timescale = np.zeros(shape=[NN,NN])
     eps_SA = np.zeros(shape=[NN,NN])    
     eps_GR = np.zeros(shape=[NN,NN])
-    eps_Tide = np.zeros(shape=[NN,NN])    
+    eps_Tides = np.zeros(shape=[NN,NN])    
     
     if debug:
         print("r1 and r2:",r1,r2)
@@ -225,14 +223,21 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
             tertiary_mass[i,j] = m3[i]
             outer_separation[i,j] = a2[j]
             secular_timescale[i,j]  = t_sec(m1, m2, m3[i], a1, a2[j], e2)
-            eps_SA[i,j] = epsilon_sa(m1, m2, m3[i], a1, a2[j], e2)
-            eps_GR[i,j] = epsilon_gr(m1, m2, m3[i], a1, a2[j], e2)
-            eps_Tide[i,j] = epsilon_tide(m1, m2, m3[i], a1, a2[j], e2, r1, r2, k1, k2)
-            eccs[i,j] = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tide[i,j], cos_inc, False) 
+            
+            if incl_SA:
+                eps_SA[i,j] = epsilon_sa(m1, m2, m3[i], a1, a2[j], e2)
+            
+            if incl_GR:
+                eps_GR[i,j] = epsilon_gr(m1, m2, m3[i], a1, a2[j], e2)
+            
+            if incl_Tides:
+                eps_Tides[i,j] = epsilon_tide(m1, m2, m3[i], a1, a2[j], e2, r1, r2, k1, k2)
+            
+            eccs[i,j] = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_inc, False) 
             rps[i,j] = a1 * (1 - eccs[i,j]) * au / rsun # ALEJANDRO: Why does rps needs to be in Rsun?
             counter=0
             for k in range(0,Ni):
-                ec = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tide[i,j], cos_incs[k], False)
+                ec = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_incs[k], False)
                 rpp = a1 * (1 - ec) 
                 # The next condition is for L2 filling and only valid for equal-mass binaries
                 # the system enters a contact phase if the radius reaches the second lagrangian point
@@ -252,13 +257,32 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, debug):
 # NN=40; Ni=30; 
 NN=50; 
 Ni=30; 
-period_days=1; m1=55; m2=55; r1=7; r2=7; k1=0.024; k2=0.024;
+metallicity = 0.0001
+is_CHE = 1
+period_days=2; m1=55; m2=55; r1=7; r2=7; k1=0.024; k2=0.024;
 # period_days=1; m1=55; m2=55; r1=7; r2=7; k1=0.0; k2=0.0;
-m3, a2, eccs, rps, fraction, tau_ZKL = calculate_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, False)
+eps_SA = True
+eps_GR = True
+eps_Tides = True
+m3, a2, eccs, rps, fraction, tau_ZKL = calculate_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, eps_SA, eps_GR, eps_Tides, False)
+
 
 mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "fraction":fraction, "tau_ZKL":tau_ZKL}
 # savemat("triple_Z_0_0001_CHE_55_Msun_k_0.mat", mdic)
-savemat("triple_Z_0_0001_CHE_55_Msun_k_0_24_rough.mat", mdic)
+savemat("triple_Z_0_0001_CHE_55_Msun_SA_GR_Tides.mat", mdic)
+
+# %%
+eps_SA = True
+eps_GR = True
+eps_Tides = True
+
+string_to_save = f"triple_Z={metallicity}_CHE={is_CHE}_M1=M2={m2}_Porb={period_days}"
+
+if eps_SA:
+    string_to_save+"_SA"
+    
+print(string_to_save)
+
 
 # %%
 # PLOT
