@@ -79,8 +79,9 @@ def epsilon_gr(m1, m2, m3, a1, a2, e2):
     # [a1]=[a2]=au
     # [e2]=adim
     m_bin = m1+m2
-    rg_over_a1= G*m_bin*msun/c**2/(a1*au) 
+    rg_over_a1= G*m_bin*msun/c**2/(a1*au)
     return 3 * m_bin*((1-e2**2)**1.5)/m3*(a2/a1)**3 * rg_over_a1
+
 
 # importance of tidal corrections (e.g. Liu, Muñoz and Lai 2015)
 def epsilon_tide(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2):
@@ -195,10 +196,10 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
     r1 = r1 * rsun / au; r2 = r2 * rsun / au # [r1]=[r2]=au
     m3 = np.logspace(0,np.log10(200),NN) # [m3]=Msun
 #     a2 = np.logspace(np.log10(a1) + np.log10(2), np.log10(a1)+ np.log10(300), NN)    
-    # ALEJANDRO: what is with the np.log10(2)?
+    # ALEJANDRO: what is with the np.log10(2) in the previous, commented line?
     a2 = np.logspace(np.log10(0.1), np.log10(10), NN)    
     eccs = np.zeros(shape=[NN,NN])
-    # ALEJANDRO: what is rps? I know is RPeriapsiS?
+    # ALEJANDRO: what is rps supposed to stand for? I know is RPeriapsiS?
     rps = np.zeros(shape=[NN,NN])
     fraction = np.zeros(shape=[NN,NN])
     cos_incs=np.linspace(-1,1,Ni)
@@ -207,7 +208,8 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
     secular_timescale = np.zeros(shape=[NN,NN])
     eps_SA = np.zeros(shape=[NN,NN])    
     eps_GR = np.zeros(shape=[NN,NN])
-    eps_Tides = np.zeros(shape=[NN,NN])    
+    eps_Tides = np.zeros(shape=[NN,NN])
+    ETA = np.zeros(shape=[NN,NN])
     
     if debug:
         print("r1 and r2:",r1,r2)
@@ -218,11 +220,10 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
         if debug:
             print (i)
         for j in range(0,NN):
-            # ALEJANDRO: what is the next lines for? I don't get why we need to user define a cos_inc 
-            # if later we will explore the cos_inc parameter space 
             tertiary_mass[i,j] = m3[i]
             outer_separation[i,j] = a2[j]
-            secular_timescale[i,j]  = t_sec(m1, m2, m3[i], a1, a2[j], e2)
+            secular_timescale[i,j] = t_sec(m1, m2, m3[i], a1, a2[j], e2)
+            ETA[i,j] = eta(m1, m2, m3[i], a1, a2[j], e2)
             
             if incl_SA:
                 eps_SA[i,j] = epsilon_sa(m1, m2, m3[i], a1, a2[j], e2)
@@ -233,12 +234,14 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
             if incl_Tides:
                 eps_Tides[i,j] = epsilon_tide(m1, m2, m3[i], a1, a2[j], e2, r1, r2, k1, k2)
             
+            # Evgeni, I am not sure we need the following line here, as it is
             eccs[i,j] = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_inc, False) 
             rps[i,j] = a1 * (1 - eccs[i,j]) * au / rsun # ALEJANDRO: Why does rps needs to be in Rsun?
             counter=0
             for k in range(0,Ni):
                 ec = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_incs[k], False)
                 rpp = a1 * (1 - ec) 
+                
                 # The next condition is for L2 filling and only valid for equal-mass binaries
                 # the system enters a contact phase if the radius reaches the second lagrangian point
                 # L2 = 1.32*R_{RL}, which for an equal-mass binary results in
@@ -249,7 +252,7 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
 
             fraction[i,j] = counter/Ni       
 
-    return tertiary_mass, outer_separation, eccs, rps, fraction, secular_timescale
+    return tertiary_mass, outer_separation, eccs, rps, fraction, secular_timescale, ETA, eps_SA, eps_GR, eps_Tides
 
 
 # %%
@@ -259,30 +262,30 @@ NN=50;
 Ni=30; 
 metallicity = 0.0001
 is_CHE = 1
-period_days=2; m1=55; m2=55; r1=7; r2=7; k1=0.024; k2=0.024;
 # period_days=1; m1=55; m2=55; r1=7; r2=7; k1=0.0; k2=0.0;
-eps_SA = True
-eps_GR = True
-eps_Tides = True
-m3, a2, eccs, rps, fraction, tau_ZKL = calculate_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, eps_SA, eps_GR, eps_Tides, False)
-
-
-mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "fraction":fraction, "tau_ZKL":tau_ZKL}
-# savemat("triple_Z_0_0001_CHE_55_Msun_k_0.mat", mdic)
-savemat("triple_Z_0_0001_CHE_55_Msun_SA_GR_Tides.mat", mdic)
-
-# %%
+period_days=2; m1=55; m2=55; r1=3; r2=3; k1=0.024; k2=0.024;
 eps_SA = True
 eps_GR = True
 eps_Tides = True
 
-string_to_save = f"triple_Z={metallicity}_CHE={is_CHE}_M1=M2={m2}_Porb={period_days}"
+string_to_save = "triple_Z="+str(metallicity)+"_CHE="+str(is_CHE)+"_M1=M2="+str(m2)+"_Porb="+str(period_days)
 
 if eps_SA:
-    string_to_save+"_SA"
+    string_to_save+="_SA"
     
+if eps_GR:
+    string_to_save+="_GR"   
+    
+if eps_Tides:
+    string_to_save+="_Tides"   
+    
+string_to_save+=".mat"
 print(string_to_save)
 
+m3, a2, eccs, rps, fraction, tau_ZKL, ETA, eps_SA, eps_GR, eps_Tides = calculate_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, eps_SA, eps_GR, eps_Tides, False)
+
+mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "fraction":fraction, "tau_ZKL":tau_ZKL, "ETA":ETA, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tides":eps_Tides}
+savemat(string_to_save, mdic)
 
 # %%
 # PLOT
@@ -304,7 +307,5 @@ plt.xscale('log')
 plt.yscale('log')
 plt.text(2.02, 1., 'fraction')        
 plt.colorbar()
-
-# %%
 
 # %%
