@@ -145,55 +145,22 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1
 
 
 # %%
-# # Testing data. Probably should be deleted when everything is working.
-# m1=55
-# m2=55
-# r1=7 
-# r2=7 
-# k1=0.02
-# k2=0.02
-# ain = 0.07559
-# period_days=0.8
-
-# # get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1, cos_inc, debug)
-
-# eps_GR1   = epsilon_gr(m1, m2, 45, ain, 0.3, 0.0)
-# eps_SA1   = epsilon_sa(m1, m2, 45, ain, 0.3, 0.0)
-# eps_Tide1 = epsilon_tide(m1, m2, 45, ain, 0.3, 0.0, r1, r2, k1, k2)
-# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
-# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
-# print(get_maximal_eccentricity(m1, m2, 45, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
-# print()
-# eps_GR1   = epsilon_gr(m1, m2, 90, ain, 0.3, 0.0)
-# eps_SA1   = epsilon_sa(m1, m2, 90, ain, 0.3, 0.0)
-# eps_Tide1 = epsilon_tide(m1, m2, 90, ain, 0.3, 0.0, r1, r2, k1, k2)
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 0.3, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
-# print()
-# eps_GR1   = epsilon_gr(m1, m2, 90, ain, 10.0, 0.0)
-# eps_SA1   = epsilon_sa(m1, m2, 90, ain, 10.0, 0.0)
-# eps_Tide1 = epsilon_tide(m1, m2, 90, ain, 10.0, 0.0, r1, r2, k1, k2)
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, 0, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, -1, 1))
-# print(get_maximal_eccentricity(m1, m2, 90, ain, 10.0, 0, eps_SA1, eps_GR1, eps_Tide1, 1, 1))
-
-# %%
-def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, incl_GR, incl_Tides, debug):
+def calculate_grids(NN, Ni, period, m1, m2, r1, r2, r1_core, r2_core, k1, k2, incl_SA, incl_GR, incl_Tides, debug):
     # NN x NN is the size of the outer grid of masses and separations
     # Ni is the number of uniform realisation in cos(inclination)
     # period is the orbital period of the inner binary
     # [period]=days
     # [m1]=[m2]=Msun
     # [r1]=[r2]=Rsun
+    # [r1_core]=[r2_core]=Rsun    
     # [k1]=[k2]=adim
-    # [cos_inc]=adim
     # incl_SA is a boolean that if true calculates epsilon_SA and otherwise sets it to zero
     # incl_GR is a boolean that if true calculates incl_GR and otherwise sets it to zero
     # incl_Tide is a boolean that if true calculates incl_Tide and otherwise sets it to zero
     e2 = 0.0
     a1 = (G*(m1+m2)*msun * (period * day_to_s)**2/4/np.pi/np.pi)**0.3333/au # [a1]=au
     r1 = r1 * rsun / au; r2 = r2 * rsun / au # [r1]=[r2]=au
+    r1_core = r1_core * rsun / au; r2_core = r2_core * rsun / au # [r1]=[r2]=au    
     m3 = np.logspace(0,np.log10(200),NN) # [m3]=Msun
 #     a2 = np.logspace(np.log10(a1) + np.log10(2), np.log10(a1)+ np.log10(300), NN)    
     # ALEJANDRO: what is with the np.log10(2) in the previous, commented line?
@@ -202,6 +169,7 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
     # ALEJANDRO: what is rps supposed to stand for? I know is RPeriapsiS?
     rps = np.zeros(shape=[NN,NN])
     fraction = np.zeros(shape=[NN,NN])
+    cos_inc_for_max_ecc = np.zeros(shape=[NN,NN])
     cos_incs=np.linspace(-1,1,Ni)
     tertiary_mass = np.zeros(shape=[NN,NN])
     outer_separation = np.zeros(shape=[NN,NN])
@@ -213,6 +181,7 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
     
     if debug:
         print("r1 and r2:",r1,r2)
+        print("r1_core and r2_core:",r1_core,r2_core)
         print("a1, a2min, a2max:",a1,np.min(a2),np.max(a2))
         print("m3min and m3max:",np.min(m3),np.max(m3))
 
@@ -232,41 +201,57 @@ def calculate_grids(NN, Ni, period, m1, m2, r1, r2, k1, k2, cos_inc, incl_SA, in
                 eps_GR[i,j] = epsilon_gr(m1, m2, m3[i], a1, a2[j], e2)
             
             if incl_Tides:
-                eps_Tides[i,j] = epsilon_tide(m1, m2, m3[i], a1, a2[j], e2, r1, r2, k1, k2)
+                eps_Tides[i,j] = epsilon_tide(m1, m2, m3[i], a1, a2[j], e2, r1_core, r2_core, k1, k2)
             
-            # Evgeni, I am not sure we need the following line here, as it is
-            eccs[i,j] = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_inc, False) 
-            rps[i,j] = a1 * (1 - eccs[i,j]) * au / rsun # ALEJANDRO: Why does rps needs to be in Rsun?
-            counter=0
+            # Evgeni, I am not sure we need the following lines here
+            # eccs[i,j] = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_inc, False) 
+            # rps[i,j] = a1 * (1 - eccs[i,j]) * au / rsun # ALEJANDRO: Why does rps needs to be in Rsun?
+            # What we want is to get the maximum eccentricity, minimum periapsis, and inclination for each m3/aout combo
+            # I think this is better achieve within the next for loop
+
+            counter = 0
+            ec = 0.0
+            rpp = a1
+            cos_inc = 0.0
             for k in range(0,Ni):
-                ec = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_incs[k], False)
-                rpp = a1 * (1 - ec) 
+                ec_temp = get_maximal_eccentricity(m1, m2, m3[i], a1, a2[j], e2, eps_SA[i,j], eps_GR[i,j], eps_Tides[i,j], cos_incs[k], False)
+                rpp_temp = a1 * (1 - ec) 
+                cos_inc_temp = cos_incs[k]
                 
+                # Here we check what is the maximum eccentricity in the cos(i) parameter space
+                if ec_temp>ec:
+                    ec = ec_temp
+                    rpp = rpp_temp
+                    cos_inc = cos_inc_temp
                 # The next condition is for L2 filling and only valid for equal-mass binaries
                 # the system enters a contact phase if the radius reaches the second lagrangian point
                 # L2 = 1.32*R_{RL}, which for an equal-mass binary results in
                 # L2 = 0.5002r_p = 0.5002*a*(1-e) (we check for contact phase at periastron)
-                # therefore, the condition is r1=r2=r >= 0.5002r_p or 0.5002r_p/r1 < 1
-                if 0.5002*rpp/r1 < 1:
+                if 0.5002*rpp_temp/r1 < 1:
                     counter=counter+1
 
+            eccs[i,j] = ec
+            # Double check rps is ploting the correct quantity
+            rps[i,j] = rpp
+            cos_inc_for_max_ecc[i,j] = cos_inc
             fraction[i,j] = counter/Ni       
 
-    return tertiary_mass, outer_separation, eccs, rps, fraction, secular_timescale, ETA, eps_SA, eps_GR, eps_Tides
+    return tertiary_mass, outer_separation, eccs, rps, cos_inc_for_max_ecc, fraction, secular_timescale, ETA, eps_SA, eps_GR, eps_Tides
 
 
 # %%
 # CALCULATE
 # NN=40; Ni=30; 
-NN=50; 
+NN=100; 
 Ni=30; 
 metallicity = 0.0001
 is_CHE = 1
 # period_days=1; m1=55; m2=55; r1=7; r2=7; k1=0.0; k2=0.0;
-period_days=2; m1=55; m2=55; r1=3; r2=3; k1=0.024; k2=0.024;
+period_days=2; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
 eps_SA = True
 eps_GR = True
 eps_Tides = True
+plot_flag = True
 
 string_to_save = "triple_Z="+str(metallicity)+"_CHE="+str(is_CHE)+"_M1=M2="+str(m2)+"_Porb="+str(period_days)
 
@@ -282,30 +267,30 @@ if eps_Tides:
 string_to_save+=".mat"
 print(string_to_save)
 
-m3, a2, eccs, rps, fraction, tau_ZKL, ETA, eps_SA, eps_GR, eps_Tides = calculate_grids(NN, Ni, period_days, m1, m2, r1, r2, k1, k2, 0.0, eps_SA, eps_GR, eps_Tides, False)
+m3, a2, eccs, rps, cos_inc, fraction, tau_ZKL, ETA, eps_SA, eps_GR, eps_Tides = calculate_grids(NN, Ni, period_days, m1, m2, r1, r2, r1_core, r2_core, k1, k2, eps_SA, eps_GR, eps_Tides, False)
 
-mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "fraction":fraction, "tau_ZKL":tau_ZKL, "ETA":ETA, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tides":eps_Tides}
+mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "cos_inc":cos_inc, "fraction":fraction, "tau_ZKL":tau_ZKL, "ETA":ETA, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tides":eps_Tides}
 savemat(string_to_save, mdic)
 
-# %%
-# PLOT
-plt.rc('text', usetex=False)
-matplotlib.rcParams.update({'font.size': 20})
-plt.contourf(m3, a2, eccs)
-plt.xlabel(r'$m_3 / \rm M_\odot$')
-plt.ylabel(r'$a_2 / \rm au$')
-plt.xscale('log')
-plt.yscale('log')
-plt.text(2.03, 1., r'$e_{\rm max}$')
-plt.colorbar()
+if plot_flag:
+    # PLOT
+    plt.rc('text', usetex=False)
+    matplotlib.rcParams.update({'font.size': 20})
+    plt.contourf(m3, a2, eccs)
+    plt.xlabel(r'$m_3 / \rm M_\odot$')
+    plt.ylabel(r'$a_2 / \rm au$')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.text(2.03, 1., r'$e_{\rm max}$')
+    plt.colorbar()
 
-plt.figure(2)
-plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
-plt.xlabel(r'$m_3 / \rm M_\odot$')
-plt.ylabel(r'$a_2 / \rm au$')
-plt.xscale('log')
-plt.yscale('log')
-plt.text(2.02, 1., 'fraction')        
-plt.colorbar()
+    plt.figure(2)
+    plt.contourf(m3, a2, fraction) #[2,2.5,3,3.5,4,4.5])
+    plt.xlabel(r'$m_3 / \rm M_\odot$')
+    plt.ylabel(r'$a_2 / \rm au$')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.text(2.02, 1., 'fraction')        
+    plt.colorbar()
 
 # %%
