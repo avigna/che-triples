@@ -63,7 +63,7 @@ def eta(m1, m2, m3, a1, a2, e2):
     mu_out = m3*m_bin/m_tot
     return mu_in/mu_out*(m_bin*a1/m_tot/a2/(1-e2**2))**0.5
 
-# importance of GR corrections (e.g. Liu, Muñoz and Lai 2015)
+# importance of GR corrections (e.g. Liu, Munoz and Lai 2015)
 def epsilon_gr(m1, m2, m3, a1, a2, e2):
     # [m1]=[m2]=[m3]=Msun
     # [a1]=[a2]=au
@@ -93,7 +93,6 @@ def epsilon_oct(m1, m2, a1, a2, e2):
 # m_mardling = [140*(1 + (x/2.8/a1)**2.5 ) for x in a2]
 # def f_tory(q):
 #     return 10**(-0.6+0.04*q) * q **(0.32+0.1*q)
-
 def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100):
     cosi_0, ETA, eps_SA1, eps_GR1, eps_Tide1 = args
     """
@@ -111,7 +110,7 @@ def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100):
         float: Approximation of the root.
     """
     if func(a, *args) * func(b, *args) >= 0:
-        print ('no solution for eps_gr = ',  eps_GR1, 'eps_tide = ', eps_Tide1)
+        print ('no solution for eps_gr = ',  eps_GR1, 'eps_tide = ', eps_Tide1, 'cos_0 = ', cosi_0)
        # raise ValueError("Function does not change sign over the interval [a, b].")
         return 0
 
@@ -129,7 +128,7 @@ def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100):
     return (a + b) / 2
 
 #Evgeni: 06.05.2024
-# function to solve for. The first three terms are from Mingipudi. The last term is new and based on Liu, Muñoz and Lai 2015
+# function to solve for. The first three terms are from Mingipudi. The last term is new and based on Liu, Muonz and Lai 2015
 # Hasn't been tested with N-body where eps_tide and eps_sa are relevant.
 def F(e_m , cosi_0, ETA, eps_SA1, eps_GR1, eps_Tide1):
     zlk_term = (1 - e_m**2)*(-3 + ETA*cosi_0 + e_m**2*ETA**2/4) + 5*(cosi_0 + ETA*e_m**2/2)**2
@@ -139,7 +138,7 @@ def F(e_m , cosi_0, ETA, eps_SA1, eps_GR1, eps_Tide1):
         
     return  zlk_term + sa_term + gr_term + tide_term
 
-# %%
+ # %%
 # calculate the maximal eccentricity according to Mangipudi et al. 2022 and the appendix with tides
 #28.03.2024 - Evgeni: added a brute force calculation of a grid search. It runs slower and less accurate
 #However it can be more stable, since fsolve struggles with the large dynamical range
@@ -159,13 +158,19 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1
         print("eps_GR1=",eps_GR1)
         print("eps_SA1=",eps_SA1)  
         print("eps_Tide1=",eps_Tide1)   
+    
+    #add the dashed line from eq 23 of Anderson, Storch and Lai 2017:
+    eps_srf = 4 * (eps_GR1 + eps_Tide1) / 3 #eq 18 with epr_rot= 0
+    cos_I_crit = - 2 / (ETA + 1e-12) * (1 + eps_srf / 2)
+    if cosi_0 <= cos_I_crit:
+        return 0
        
     # in the next function, what does F means? 
     args = (cosi_0, ETA, eps_SA1, eps_GR1, eps_Tide1)
     e_max = fsolve_bisection(F, a=1e-8, b=1-1e-8, args = args)
     
     delta_e = 0
-    # the fluctuating terms in eq 24 of Mangipudi et al., 2022, calculated only for eps_sa > 0.01
+    # the fluctuating terms in eq 24 ofmangipudi + 2022, calculated only for eps_sa > 0.01
     if eps_SA1 > 0.01:
         j_min = (1 - e_max**2)**0.5
         K2 = j_min * cosi_0 + j_min**2 * ETA / 2
@@ -179,8 +184,7 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1
         e_tot = 1
     
     return e_tot
-
-# %%
+#%%
 def test_eccentricity_with_gr(N):
     m1=m2=1
     m3=10
@@ -268,5 +272,3 @@ def plot_e_grid(N):
     return ecc_grid, etas
 
 plot_e_grid(100)
-
-# %%
