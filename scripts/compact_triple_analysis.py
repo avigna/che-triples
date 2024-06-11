@@ -181,40 +181,6 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1
     return e_tot
 
 # %%
-# TEST
-# Alejandro: are we sending this to a test file/function?
-# def test_eccentricity_with_gr(N):
-#     m1=m2=1
-#     m3=10
-#     a1=1
-#     a2=10
-#     e2=0
-#     eps_SA1=0.
-#     eps_Tide1=0
-#     eps_GR1=np.logspace(-1.5, 1.5,N)#np.logspace(-2,1,201)
-#     cos_inc=0
-#     debug = False
-#     em=[]
-#     em_analytic2 = [(1 - 64 / 81 * x**2) for x in eps_GR1]
-#     for i in range(0,len(eps_GR1)):
-#         em_to_append = get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1[i], eps_Tide1, cos_inc, debug)
-#         em.append(em_to_append)#%%
-#     plt.figure(figsize=(8,6))
-#     plt.plot(eps_GR1, em, linewidth=3, label='numerical')
-#     plt.plot(eps_GR1, [max(1e-20, x)**0.5 for x in em_analytic2],linewidth=3, label=r'$\epsilon_{\rm GR} \ll 1\ \rm limit$')
-#     plt.xlabel(r'$\log \epsilon_{\rm GR}$')
-#     plt.ylabel(r'$\log e_{\rm max}$')
-#     plt.ylim(2e-5,2)
-#     plt.legend()
-
-#     plt.yscale('log')
-#     plt.xscale('log')
-#     plt.subplots_adjust(left=0.15, bottom=0.15, right=0.98, top=0.92,)
-
-# test_eccentricity_with_gr(1000)
-# %%
-
-# %%
 def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug):
     a1_cubed = G * msun * (m1 + m2) * (p * day_to_s)**2 / 4 / np.pi**2
     a1_in_au = a1_cubed**(1/3) / au
@@ -260,7 +226,7 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
                 ec = 0.0
                 for val in cos_incs:
                     e_temp = get_maximal_eccentricity(m1, m2, m3[i], a1_in_au, a2[j], e2, eps_SA1, eps_GR1, eps_Tide1, val, debug)
-                    print(val,ec,e_temp,cos_inc_temp)
+#                     print(val,ec,e_temp,cos_inc_temp)
                     # Here we check what is the maximum eccentricity in the cos(i) parameter space
                     if e_temp>ec:
                         ec = e_temp
@@ -280,13 +246,12 @@ NN=100;
 Ni=51; # Make sure the list includes i=0
 metallicity = 0.0001
 is_CHE = 1
-period_days=2; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
+period_days=1; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
 
 debug_flag = False
-eps_SA_flag = False
-eps_GR_flag = False
-eps_Tides_flag = False
-plot_flag = True
+eps_SA_flag = True
+eps_GR_flag = True
+eps_Tides_flag = True
 
 string_to_save = "triple_Z="+str(metallicity)+"_CHE="+str(is_CHE)+"_M1=M2="+str(m2)+"_Porb="+str(period_days)
 
@@ -300,19 +265,29 @@ if eps_Tides_flag:
     string_to_save+="_Tides"   
     
 string_to_save+=".mat"
-print(string_to_save)
 
 cos_inc_max_ecc, ecc_grid, etas, m3, p2 = calculate_e_grid(NN, Ni, m1, m2, period_days, r1, r2, r1_core, r2_core, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug_flag)
 
+# %%
+# SAVE
+from scipy.io import savemat
+
+print(string_to_save)
+
+mdic = {"m3":m3, "p2":p2, "eccs":ecc_grid, "cos_inc":cos_inc_max_ecc, "eta":etas}
+savemat(string_to_save, mdic)
+
 # mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "cos_inc":cos_inc, "fraction":fraction, "tau_ZKL":tau_ZKL, "ETA":ETA, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tides":eps_Tides}
-# savemat(string_to_save, mdic)
+# mdic = {"m3":m3, "p2":p2, "eccs":ecc_grid, "cos_inc":cos_inc_max_ecc, "tau_ZKL":tau_ZKL, "eta":etas, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tides":eps_Tides}
+
 
 # %%
-print(np.size(m3))
-print(np.size(p2))
-print(np.size(ecc_grid))
 
 # %%
+
+# %%
+plot_flag = True
+
 # PLOT
 if plot_flag:
     fig, ax = plt.subplots(figsize=(12,4.5))
@@ -351,3 +326,34 @@ plt.xlabel(r'$cos(i)|_{e_{max}}$')
 plt.ylabel(r'$\eta$')
 
 # %%
+# TEST
+# Alejandro: are we sending this to a test file/function?
+# def test_eccentricity_with_gr(N):
+#     m1=m2=1
+#     m3=10
+#     a1=1
+#     a2=10
+#     e2=0
+#     eps_SA1=0.
+#     eps_Tide1=0
+#     eps_GR1=np.logspace(-1.5, 1.5,N)#np.logspace(-2,1,201)
+#     cos_inc=0
+#     debug = False
+#     em=[]
+#     em_analytic2 = [(1 - 64 / 81 * x**2) for x in eps_GR1]
+#     for i in range(0,len(eps_GR1)):
+#         em_to_append = get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1[i], eps_Tide1, cos_inc, debug)
+#         em.append(em_to_append)#%%
+#     plt.figure(figsize=(8,6))
+#     plt.plot(eps_GR1, em, linewidth=3, label='numerical')
+#     plt.plot(eps_GR1, [max(1e-20, x)**0.5 for x in em_analytic2],linewidth=3, label=r'$\epsilon_{\rm GR} \ll 1\ \rm limit$')
+#     plt.xlabel(r'$\log \epsilon_{\rm GR}$')
+#     plt.ylabel(r'$\log e_{\rm max}$')
+#     plt.ylim(2e-5,2)
+#     plt.legend()
+
+#     plt.yscale('log')
+#     plt.xscale('log')
+#     plt.subplots_adjust(left=0.15, bottom=0.15, right=0.98, top=0.92,)
+
+# test_eccentricity_with_gr(1000)
