@@ -230,9 +230,12 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(100 * a1_in_au), N)
 
     e2 = 0
-    eps_SA1 = 0
-    eps_GR1 = 0
-    eps_Tide1 = 0    
+#     eps_SA1 = 0
+#     eps_GR1 = 0
+#     eps_Tide1 = 0       
+    eps_SA = np.zeros([N,N])
+    eps_GR = np.zeros([N,N])
+    eps_Tide = np.zeros([N,N])      
     ecc_grid = np.zeros([N,N])
     etas = np.zeros([N,N])
     tau_sec = np.zeros([N,N])
@@ -254,12 +257,15 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
             
             if eps_SA_flag:
                 eps_SA1 = epsilon_sa(m1, m2, m3[i], a1_in_au, a2[j], e2)
+                eps_SA[i][j] = eps_SA1
             
             if eps_GR_flag:
                 eps_GR1 = epsilon_gr(m1, m2, m3[i], a1_in_au, a2[j], e2)
+                eps_GR[i][j] = eps_GR1                
             
             if eps_Tides_flag:
                 eps_Tide1 = epsilon_tide(m1, m2, m3[i], a1_in_au, a2[j], e2, r1, r2, k1, k2)
+                eps_Tide[i][j] = eps_Tide1        
         
             if Ni==-1:
                 ecc_grid[i][j] = get_maximal_eccentricity(m1, m2, m3[i], a1_in_au, a2[j], e2, eps_SA1, eps_GR1, eps_Tide1, cos_inc, debug)
@@ -267,7 +273,7 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
                 ec = 0.0
                 for val in cos_incs:
                     e_temp = get_maximal_eccentricity(m1, m2, m3[i], a1_in_au, a2[j], e2, eps_SA1, eps_GR1, eps_Tide1, val, debug)
-#                     print(val,ec,e_temp,cos_inc_temp)
+
                     # Here we check what is the maximum eccentricity in the cos(i) parameter space
                     if e_temp>ec:
                         ec = e_temp
@@ -279,7 +285,7 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
             
     p2 = [2*np.pi* ((x*au)**3 / G / msun / (m1+m2))**0.5/day_to_s  for x in a2]
 
-    return cos_inc_max_ecc, ecc_grid, etas, m3, p2, tau_sec
+    return cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, m3, p2, tau_sec
 
 # %%
 # CALCULATE
@@ -308,7 +314,7 @@ if eps_Tides_flag:
 string_to_save+=".mat"
 print(string_to_save)
 
-cos_inc_max_ecc, ecc_grid, etas, m3, p2, tau_sec = calculate_e_grid(NN, Ni, m1, m2, period_days, r1, r2, r1_core, r2_core, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug_flag)
+cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, m3, p2, tau_sec = calculate_e_grid(NN, Ni, m1, m2, period_days, r1, r2, r1_core, r2_core, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug_flag)
 
 # %%
 # SAVE
@@ -316,12 +322,8 @@ from scipy.io import savemat
 
 print(string_to_save)
 
-mdic = {"m3":m3, "p2":p2, "eccs":ecc_grid, "cos_inc":cos_inc_max_ecc, "eta":etas, "tau_sec":tau_sec}
+mdic = {"cos_inc":cos_inc_max_ecc, "eccs":ecc_grid, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tide":eps_Tide, "eta":etas, "m3":m3, "p2":p2, "tau_sec":tau_sec}
 savemat(string_to_save, mdic)
-
-# mdic = {"m3":m3, "a2":a2, "eccs":eccs, "rps":rps, "cos_inc":cos_inc, "fraction":fraction, "tau_ZKL":tau_ZKL, "ETA":ETA, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tides":eps_Tides}
-# mdic = {"m3":m3, "p2":p2, "eccs":ecc_grid, "cos_inc":cos_inc_max_ecc, "tau_ZKL":tau_ZKL, "eta":etas, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tides":eps_Tides}
-
 
 # %%
 plot_flag = True
@@ -362,5 +364,3 @@ if plot_flag:
 plt.scatter(cos_inc_max_ecc,etas)
 plt.xlabel(r'$cos(i)|_{e_{max}}$')
 plt.ylabel(r'$\eta$')
-
-# %%
