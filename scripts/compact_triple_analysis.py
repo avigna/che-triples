@@ -238,10 +238,12 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     eps_Tide = np.zeros([N,N])      
     ecc_grid = np.zeros([N,N])
     etas = np.zeros([N,N])
+    f_merger = np.zeros([N,N])
     tau_sec = np.zeros([N,N])
     cos_inc_max_ecc = np.zeros(shape=[N,N])
-    
+        
     if Ni==-1:
+        # Here we should probably make it an user-defined choice which angle to pick
         cos_inc = 0
     else:
         cos_incs=np.linspace(-1,1,Ni)
@@ -271,9 +273,15 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
                 ecc_grid[i][j] = get_maximal_eccentricity(m1, m2, m3[i], a1_in_au, a2[j], e2, eps_SA1, eps_GR1, eps_Tide1, cos_inc, debug)
             else:
                 ec = 0.0
+                N_merger = 0
                 for val in cos_incs:
                     e_temp = get_maximal_eccentricity(m1, m2, m3[i], a1_in_au, a2[j], e2, eps_SA1, eps_GR1, eps_Tide1, val, debug)
 
+                    # Assess if a merger has occured following Marchant et al. (2016), which states that 
+                    # the condition for merger is: R >= 1.32*f(1)*a*(1-e) \approx 0.5*a*(1-e) for q=1 
+                    if r1>=(0.5*a1_in_au*(1-e_temp)):
+                        N_merger = N_merger+1                   
+                    
                     # Here we check what is the maximum eccentricity in the cos(i) parameter space
                     if e_temp>ec:
                         ec = e_temp
@@ -281,11 +289,13 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
                     
                 ecc_grid[i][j] = ec
                 cos_inc_max_ecc[i][j] = cos_inc_temp
-                    
+                print(N_merger)
+                f_merger[i][j] = N_merger/Ni
             
     p2 = [2*np.pi* ((x*au)**3 / G / msun / (m1+m2))**0.5/day_to_s  for x in a2]
 
-    return cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, m3, p2, tau_sec
+    return cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, f_merger, m3, p2, tau_sec
+
 
 # %%
 # CALCULATE
@@ -300,7 +310,7 @@ is_CHE = 1; metallicity = 0.0001; period_days=1; m1=55; m2=55; r1=7; r2=7; r1_co
 
 debug_flag = False
 eps_SA_flag = True
-eps_GR_flag = False
+eps_GR_flag = True
 eps_Tides_flag = True
 
 string_to_save = "triple_Z="+str(metallicity)+"_CHE="+str(is_CHE)+"_M1=M2="+str(m2)+"_Porb="+str(period_days)
@@ -317,7 +327,7 @@ if eps_Tides_flag:
 string_to_save+=".mat"
 print(string_to_save)
 
-cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, m3, p2, tau_sec = calculate_e_grid(NN, Ni, m1, m2, period_days, r1, r2, r1_core, r2_core, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug_flag)
+cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, f_merger, m3, p2, tau_sec = calculate_e_grid(NN, Ni, m1, m2, period_days, r1, r2, r1_core, r2_core, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug_flag)
 
 # %%
 # SAVE
@@ -325,7 +335,7 @@ from scipy.io import savemat
 
 print(string_to_save)
 
-mdic = {"cos_inc":cos_inc_max_ecc, "eccs":ecc_grid, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tide":eps_Tide, "eta":etas, "m3":m3, "p2":p2, "tau_sec":tau_sec}
+mdic = {"cos_inc":cos_inc_max_ecc, "eccs":ecc_grid, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tide":eps_Tide, "eta":etas, "f_merger":f_merger, "m3":m3, "p2":p2, "tau_sec":tau_sec}
 savemat(string_to_save, mdic)
 
 # %%
@@ -367,5 +377,10 @@ if plot_flag:
 plt.scatter(cos_inc_max_ecc,etas)
 plt.xlabel(r'$cos(i)|_{e_{max}}$')
 plt.ylabel(r'$\eta$')
+
+# %%
+f_merger
+
+# %%
 
 # %%
