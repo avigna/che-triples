@@ -226,13 +226,13 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     r1 = r1 * rsun / au
     r2 = r2 * rsun / au
 
-    m3 = np.logspace(0,3,N)
+    m3 = np.logspace(0,2,N)
     a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(100 * a1_in_au), N)
 
     e2 = 0
-#     eps_SA1 = 0
-#     eps_GR1 = 0
-#     eps_Tide1 = 0       
+    eps_SA1 = 0
+    eps_GR1 = 0
+    eps_Tide1 = 0       
     eps_SA = np.zeros([N,N])
     eps_GR = np.zeros([N,N])
     eps_Tide = np.zeros([N,N])      
@@ -291,13 +291,16 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
 # CALCULATE
 NN=100; 
 Ni=51; # Make sure the list includes i=0
-metallicity = 0.0001
-is_CHE = 1
-period_days=1; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
+
+# CHE
+is_CHE = 1; metallicity = 0.0001; period_days=1; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
+
+# # TIC 470710327
+# is_CHE = 0; metallicity = 0.142; period_days=1.1; m1=6; m2=6; r1=2.8; r2=2.8; r1_core=2.8; r2_core=2.8; k1=0.014; k2=0.014;
 
 debug_flag = False
 eps_SA_flag = True
-eps_GR_flag = True
+eps_GR_flag = False
 eps_Tides_flag = True
 
 string_to_save = "triple_Z="+str(metallicity)+"_CHE="+str(is_CHE)+"_M1=M2="+str(m2)+"_Porb="+str(period_days)
@@ -364,3 +367,5 @@ if plot_flag:
 plt.scatter(cos_inc_max_ecc,etas)
 plt.xlabel(r'$cos(i)|_{e_{max}}$')
 plt.ylabel(r'$\eta$')
+
+# %%
