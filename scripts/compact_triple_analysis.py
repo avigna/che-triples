@@ -227,7 +227,10 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     r2 = r2 * rsun / au
 
     m3 = np.logspace(0,2,N)
-    a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(100 * a1_in_au), N)
+    # For CHE
+#     a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(100 * a1_in_au), N)
+    # For TIC
+    a2 = np.logspace(np.log10(3 * a1_in_au), np.log10(100 * a1_in_au), N)
 
     e2 = 0
     eps_SA1 = 0
@@ -302,16 +305,16 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
 NN=100; 
 Ni=51; # Make sure the list includes i=0
 
-# CHE
-is_CHE = 1; metallicity = 0.0001; period_days=1; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
+# # CHE
+# is_CHE = 1; metallicity = 0.0001; period_days=1; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
 
-# # TIC 470710327
-# is_CHE = 0; metallicity = 0.142; period_days=1.1; m1=6; m2=6; r1=2.8; r2=2.8; r1_core=2.8; r2_core=2.8; k1=0.014; k2=0.014;
+# TIC 470710327
+is_CHE = 0; metallicity = 0.142; period_days=1.1; m1=6; m2=6; r1=2.8; r2=2.8; r1_core=2.8; r2_core=2.8; k1=0.014; k2=0.014;
 
 debug_flag = False
 eps_SA_flag = True
 eps_GR_flag = True
-eps_Tides_flag = True
+eps_Tides_flag = False
 
 string_to_save = "triple_Z="+str(metallicity)+"_CHE="+str(is_CHE)+"_M1=M2="+str(m2)+"_Porb="+str(period_days)
 
@@ -339,48 +342,6 @@ mdic = {"cos_inc":cos_inc_max_ecc, "eccs":ecc_grid, "eps_SA":eps_SA, "eps_GR":ep
 savemat(string_to_save, mdic)
 
 # %%
-plot_flag = True
-
-# PLOT
-if plot_flag:
-    fig, ax = plt.subplots(figsize=(12,4.5))
-    plt.subplot(121)
-    CS1 = plt.contourf(m3, p2, np.transpose(ecc_grid), levels = np.linspace(0,1,21), cmap = 'viridis')
-    CS2 = plt.contour(m3, p2, np.transpose(ecc_grid),  [0.1, 0.3, 0.5, 0.7, 0.9], cmap='Greys', linestyles='dashed', linewidths=3)
-
-    plt.xlabel(r'$m_3\ [M_\odot]$')
-    plt.ylabel(r'$P_{\rm out}\ \rm [day]$')
-    plt.axvline(50, color='red', linestyle='dashed', linewidth=3)
-
-    plt.xscale('log')
-    plt.yscale('log')
-    clb = plt.colorbar(CS1)
-    clb.set_label(r'$e_{\rm max}$', labelpad=-150, y=1.12, rotation=0, size = 26)
-    ax.clabel(CS2, inline=True, fontsize=10)
-
-    plt.subplot(122)
-    CS1 = plt.contourf(m3, p2, np.transpose(np.log10(etas)), cmap = 'viridis', levels=np.linspace(-2.5,1.5,41))
-    CS2 = plt.contour(m3, p2, np.transpose(np.log10(etas)),  [0], linestyles='dashed', linewidths=3)
-    plt.xlabel(r'$m_3\ [M_\odot]$')
-    plt.ylabel(r'$P_{\rm out}\ \rm [day]$')
-
-    plt.xscale('log')
-    plt.yscale('log')
-    clb = plt.colorbar(CS1)
-    clb.set_label(r'$\log_{\rm 10} \eta$', labelpad=-150, y=1.12, rotation=0, size = 26)
-    ax.clabel(CS2, inline=True, fontsize=10)
-
-    plt.subplots_adjust(top = 0.88, bottom=0.16, left=0.1, right= 0.97, hspace=0.25)
-
-
-# %%
 plt.scatter(cos_inc_max_ecc,etas)
 plt.xlabel(r'$cos(i)|_{e_{max}}$')
 plt.ylabel(r'$\eta$')
-
-# %%
-f_merger
-
-# %%
-
-# %%
