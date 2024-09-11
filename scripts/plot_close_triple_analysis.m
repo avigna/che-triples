@@ -1,6 +1,7 @@
 function plot_close_triple_analysis(debug_flag, annotations_flag, save_flag)
 % Function created by Alejandro Vigna-Gomez
 % debug_flag: bool
+% annotations_flag: bool
 % save_flag: bool
 
 % TIC 470710327
@@ -14,39 +15,49 @@ orbital_period_yr       = @(a_AU, M_Msun) sqrt((a_AU.^3.0)./(M_Msun));
 P_out_eta_unity_days    = @(m, P_d, m3) (2^-4).*m.*m.*(1./(m3.^3.0)).*(2*m+m3)*P_d;
 
 % Stability criteria
-stability_MA01 = @(a_in, q_out, e_out, i_mut) 2.8*((1+q_out).*((1+e_out)./sqrt((1-e_out))).^(2.0/5)).*(1-(0.3.*i_mut/pi));
-Y_crit = @(q_out, e_in_tilde, e_out, i_mut) 2.4 * ((1 + q_out) / ((1 + e_in_tilde) * (1 - e_out)^(1/2)))^(2/5) ...
-    * (((1 - 0.2 * e_in_tilde + e_out) / 8) * (cos(i_mut) - 1) + 1);
+% a_out_stability_MA01 = @(a_in, q_out, e_out, i_mut) (2.8*((1+q_out).*((1+e_out)./sqrt((1-e_out))).^(2.0/5)).*(1-(0.3.*i_mut/pi))).*a_in;
+a_out_stability_MA01_circular         = @(a_in, q_out, i_mut_rad) (2.8*((1+q_out).^(2.0/5))).*a_in;
+a_out_stability_Vynatheya_circular    = @(a_in, q_out, i_mut) (2.4*((1+q_out).^(2.0/5)).*(((cos(i_mut)-1)./8.0)+1)).*a_in;
+% Y_crit = @(q_out, e_in_tilde, e_out, i_mut) 2.4 * ((1 + q_out) / ((1 + e_in_tilde) * (1 - e_out)^(1/2)))^(2/5) ...
+%     * (((1 - 0.2 * e_in_tilde + e_out) / 8) * (cos(i_mut) - 1) + 1);
 
 % DATA
 % Choose
-list_binary = {'55+55 CHE GR+Tides','55+55 CHE GR','TIC 470710327'};
+list_binary = {'45+45 CHE','45+45 CHE GR','TIC 470710327 full','TIC 470710327 GR'};
 [indx_binary, tf_binary] = listdlg('ListString',list_binary);
 
 
 if indx_binary==1
-    filename            = '../data/dynamics/triple_Z=0.0001_CHE=1_M1=M2=55_Porb=1_SA_GR_Tides.mat';
-    title_string        = ['$m_1=m_2=55\ M_{\odot},\ P_{\rm{orb}}=1\ d,\ Z=0.0001$'];
+    filename            = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_SA_GR_Tides.mat';
+    title_string        = ['$m_1=m_2=45\ M_{\odot},\ P_{\rm{orb}}=1\ d,\ Z=0.0001$'];
     plot_label_temp_png = '../plots/png/CHE-full-close-triple-analysis_';
     plot_label_temp_pdf = '../plots/pdf/CHE-full-close-triple-analysis_';    
-    mass_Msun           = 55;
+    mass_Msun           = 45;
     radius_Rsun         = 7;
     orbital_period_days = 1.0; 
 elseif indx_binary==2
-    filename            = '../data/dynamics/triple_Z=0.0001_CHE=1_M1=M2=55_Porb=1_SA_GR.mat';
-    title_string        = ['$m_1=m_2=55\ M_{\odot},\ P_{\rm{orb}}=1\ d,\ Z=0.0001$'];
+    filename            = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_SA_GR.mat';
+    title_string        = ['$m_1=m_2=45\ M_{\odot},\ P_{\rm{orb}}=1\ d,\ Z=0.0001$'];
     plot_label_temp_png = '../plots/png/CHE-GR-close-triple-analysis_';
     plot_label_temp_pdf = '../plots/pdf/CHE-GR-close-triple-analysis_';    
-    mass_Msun           = 55;
+    mass_Msun           = 45;
     radius_Rsun         = 7;
     orbital_period_days = 1.0;     
 elseif indx_binary==3
-    filename            = '../data/dynamics/triple_Z=0.142_CHE=0_M1=M2=6_Porb=1.1_SA_GR_Tides.mat';
+    filename            = '../data/dynamics/6_Msun/triple_Z=0.142_CHE=0_M1=M2=6_Porb=1.1_SA_GR_Tides.mat';
     title_string        = '$m_1=m_2=6\ M_{\odot}, P_{\rm{orb}}=1.1\ d,\ Z=0.0142$';
-    plot_label_temp_png = '../plots/png/TIC-close-triple-analysis_';
-    plot_label_temp_pdf = '../plots/pdf/TIC-close-triple-analysis_';        
+    plot_label_temp_png = '../plots/png/TIC-full-close-triple-analysis_';
+    plot_label_temp_pdf = '../plots/pdf/TIC-full-close-triple-analysis_';        
     mass_Msun           = 6;
-    radius_Rsun         = 2.8;    
+    radius_Rsun         = 2.8;
+    orbital_period_days = 1.1;
+elseif indx_binary==4
+    filename            = '../data/dynamics/6_Msun/triple_Z=0.142_CHE=0_M1=M2=6_Porb=1.1_SA_GR.mat';
+    title_string        = '$m_1=m_2=6\ M_{\odot}, P_{\rm{orb}}=1.1\ d,\ Z=0.0142$';
+    plot_label_temp_png = '../plots/png/TIC-GR-close-triple-analysis_';
+    plot_label_temp_pdf = '../plots/pdf/TIC-GR-close-triple-analysis_';        
+    mass_Msun           = 6;
+    radius_Rsun         = 2.8;
     orbital_period_days = 1.1;    
 else
     warning("Odd choice.")
@@ -79,12 +90,16 @@ separation_inner_AU = separation_in_AU(orbital_period_year,mass_Msun+mass_Msun);
 
 % Calculate eta=1
 mock_mass = linspace(1,100,1001);
-YY = P_out_eta_unity_days(mass_Msun,orbital_period_days,mock_mass);
+% YY = P_out_eta_unity_days(mass_Msun,orbital_period_days,mock_mass);
 
 q_out = mock_mass./(mass_Msun+mass_Msun);
-crit_stability_AU       = stability_MA01(separation_inner_AU, q_out, 0.0, 0.0).*separation_inner_AU;
-crit_stability_P_orb_yr = orbital_period_yr(crit_stability_AU, mass_Msun+mass_Msun+mock_mass);
-crit_stability_P_orb_d  = crit_stability_P_orb_yr.*AstroConstants.yr_to_d;
+crit_stability_MA01_a_AU            = a_out_stability_MA01_circular(separation_inner_AU, q_out, 0.0);
+crit_stability_MA01_P_orb_yr        = orbital_period_yr(crit_stability_MA01_a_AU, mass_Msun+mass_Msun+mock_mass);
+crit_stability_MA01_P_orb_d         = crit_stability_MA01_P_orb_yr.*AstroConstants.yr_to_d;
+
+crit_stability_Vynatheya_a_AU      = a_out_stability_Vynatheya_circular(separation_inner_AU, q_out, 0.0);
+crit_stability_Vynatheya_P_orb_yr  = orbital_period_yr(crit_stability_Vynatheya_a_AU, mass_Msun+mass_Msun+mock_mass);
+crit_stability_Vynatheya_P_orb_d   = crit_stability_Vynatheya_P_orb_yr.*AstroConstants.yr_to_d;
 
 % Filtering
 e_lim_val = 1-(2*radius_Rsun/(separation_inner_AU.*AstroConstants.AU_to_Rsun));
@@ -95,6 +110,10 @@ min_eccentricity = 0.001;
 index_of_non_induced_eccentricity = find(e_max<min_eccentricity);
 cos_inc(index_of_non_induced_eccentricity) = nan;
 e_max(index_of_non_induced_eccentricity) = nan;
+
+% index_weird_inclination = (find(cos_inc>0.0));
+% length(index_weird_inclination)
+% cos_inc(index_weird_inclination) = nan;
 
 min_val_colorbar    = log10(min(min(min(min(eps_SA)),min(min(eps_GR))),min(min(eps_Tide))));
 max_val_colorbar    = log10(max(max(max(max(eps_SA)),max(max(eps_GR))),max(max(eps_Tide))));
@@ -147,9 +166,17 @@ else
 end  
 
 
-if debug_flag
-    plot_label
-end
+list_stability = {'MA01','Vynatheya'};
+[indx_stability, tf_stability] = listdlg('ListString',list_stability);
+
+if indx_stability==1
+    crit_stability_P_orb_d = crit_stability_MA01_P_orb_d;
+elseif indx_stability==2
+    crit_stability_P_orb_d = crit_stability_Vynatheya_P_orb_d;
+else
+    warning("Odd choice.")
+end  
+
 
 solar=char(9737);
 sz = 145.0;
@@ -157,27 +184,10 @@ sz2=25;
 lw=2.0;
 fs=18;
 
-% lines1      = [         0    0.4470    0.7410];
-% lines2      = [    0.8500    0.3250    0.0980];
-% lines3      = [    0.9290    0.6940    0.1250];
-% lines4      = [    0.4940    0.1840    0.5560];
-% lines5      = [    0.4660    0.6740    0.1880];
 lines6      = [    0.3010    0.7450    0.9330];
-% lines7      = [    0.6350    0.0780    0.1840];
 dark_grey   = 0.3.*[1 1 1];
 light_grey  = 0.6.*[1 1 1];    
 grey   = 0.5.*[1 1 1];
-
-
-pos_hor_6_d = 9.5;
-pos_ver_6_d = 0.41;
-pos_hor_30_d = 3.5;
-pos_ver_30_d = 1.1;
-
-pos_hor     = 70;
-pos_wide    = 6.0;
-pos_close   = 0.5;
-pos_unst    = 0.15;
 
 xLims       = [1 100];
 xLimsLabels = {'1','10','100'};
@@ -286,7 +296,7 @@ if annotations_flag
     
  
 
-    if indx_binary==3
+    if indx_binary==3 | indx_binary==4
         plot3(m_out_TIC,P_out_TIC,1,'or','MarkerSize',10,'MarkerFaceColor','r')
         text(m_out_TIC+2,P_out_TIC-4,1,'TIC 470710327','Color','w','Fontsize',fs)
     end
@@ -294,12 +304,13 @@ if annotations_flag
 
 end
 
+
 dummy_ones = ones(size(crit_stability_P_orb_d));
-unstableRegion_Mardling = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_stability_P_orb_d)],leveler.*[dummy_ones dummy_ones],dark_grey);
-unstableRegion_Mardling.EdgeColor = 'none';
-unstableRegion_Mardling.FaceColor = dark_grey;
-unstableRegion_Mardling.HandleVisibility = 'off';
-text(1.2,2,leveler,'Dynamically Unstable','Color','w','Fontsize',fs)     
+unstableRegion = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_stability_P_orb_d)],leveler.*[dummy_ones dummy_ones],dark_grey);
+unstableRegion.EdgeColor = 'none';
+unstableRegion.FaceColor = dark_grey;
+unstableRegion.HandleVisibility = 'off';
+text(1.2,1.75,leveler,'Dynamically Unstable','Color','w','Fontsize',fs)
 
 ylabel('$P_{\rm{out}}/\rm{d}$')
 xlabel('$m_3/M_{\odot}$')

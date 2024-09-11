@@ -8,8 +8,8 @@ Created on Tue Mar 29 16:58:54 2022
 """
 import numpy as np
 from matplotlib import pyplot as plt
-
 from astropy import constants as const
+from scipy.io import savemat
 # %%
 # CONSTANTS
 c          = const.c.cgs.value                # speed of light (c) in cgs
@@ -88,11 +88,6 @@ def epsilon_tide(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2):
 # octupole term (e.g. Naoz 2016 and many others)
 def epsilon_oct(m1, m2, a1, a2, e2):
     return (m1-m2)/(m1+m2)* (a1/a2) * e2/(1-e2**2)
-
-# ALEJANDRO: include a function to check for stability?
-# m_mardling = [140*(1 + (x/2.8/a1)**2.5 ) for x in a2]
-# def f_tory(q):
-#     return 10**(-0.6+0.04*q) * q **(0.32+0.1*q)
 
 def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100):
     cosi_0, ETA, eps_SA1, eps_GR1, eps_Tide1 = args
@@ -188,36 +183,34 @@ def get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1, eps_Tide1
 
 # %%
 # TEST
-# Alejandro: are we sending this to a test file/function?
-# def test_eccentricity_with_gr(N):
-#     m1=m2=1
-#     m3=10
-#     a1=1
-#     a2=10
-#     e2=0
-#     eps_SA1=0.
-#     eps_Tide1=0
-#     eps_GR1=np.logspace(-1.5, 1.5,N)#np.logspace(-2,1,201)
-#     cos_inc=0
-#     debug = False
-#     em=[]
-#     em_analytic2 = [(1 - 64 / 81 * x**2) for x in eps_GR1]
-#     for i in range(0,len(eps_GR1)):
-#         em_to_append = get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1[i], eps_Tide1, cos_inc, debug)
-#         em.append(em_to_append)#%%
-#     plt.figure(figsize=(8,6))
-#     plt.plot(eps_GR1, em, linewidth=3, label='numerical')
-#     plt.plot(eps_GR1, [max(1e-20, x)**0.5 for x in em_analytic2],linewidth=3, label=r'$\epsilon_{\rm GR} \ll 1\ \rm limit$')
-#     plt.xlabel(r'$\log \epsilon_{\rm GR}$')
-#     plt.ylabel(r'$\log e_{\rm max}$')
-#     plt.ylim(2e-5,2)
-#     plt.legend()
+def test_eccentricity_with_gr(N):
+    m1=m2=1
+    m3=10
+    a1=1
+    a2=10
+    e2=0
+    eps_SA1=0.
+    eps_Tide1=0
+    eps_GR1=np.logspace(-1.5, 1.5,N)#np.logspace(-2,1,201)
+    cos_inc=0
+    debug = False
+    em=[]
+    em_analytic2 = [(1 - 64 / 81 * x**2) for x in eps_GR1]
+    for i in range(0,len(eps_GR1)):
+        em_to_append = get_maximal_eccentricity(m1, m2, m3, a1, a2, e2, eps_SA1, eps_GR1[i], eps_Tide1, cos_inc, debug)
+        em.append(em_to_append)#%%
+    plt.figure(figsize=(8,6))
+    plt.plot(eps_GR1, em, linewidth=3, label='numerical')
+    plt.plot(eps_GR1, [max(1e-20, x)**0.5 for x in em_analytic2],linewidth=3, label=r'$\epsilon_{\rm GR} \ll 1\ \rm limit$')
+    plt.xlabel(r'$\log \epsilon_{\rm GR}$')
+    plt.ylabel(r'$\log e_{\rm max}$')
+    plt.ylim(2e-5,2)
+    plt.legend()
 
-#     plt.yscale('log')
-#     plt.xscale('log')
-#     plt.subplots_adjust(left=0.15, bottom=0.15, right=0.98, top=0.92,)
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.subplots_adjust(left=0.15, bottom=0.15, right=0.98, top=0.92,)
 
-# test_eccentricity_with_gr(1000)
 
 # %%
 def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug):
@@ -225,12 +218,12 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     a1_in_au = a1_cubed**(1/3) / au
     r1 = r1 * rsun / au
     r2 = r2 * rsun / au
-
     m3 = np.logspace(0,2,N)
-    # For CHE
-#     a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(100 * a1_in_au), N)
-    # For TIC
-    a2 = np.logspace(np.log10(3 * a1_in_au), np.log10(100 * a1_in_au), N)
+
+#     #     For CHE
+    a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(100 * a1_in_au), N)
+# #     # For TIC
+#     a2 = np.logspace(np.log10(2.5*a1_in_au), np.log10(100 * a1_in_au), N)
 
     e2 = 0
     eps_SA1 = 0
@@ -298,50 +291,3 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     p2 = [2*np.pi* ((x*au)**3 / G / msun / (m1+m2))**0.5/day_to_s  for x in a2]
 
     return cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, f_merger, m3, p2, tau_sec
-
-
-# %%
-# CALCULATE
-NN=100; 
-Ni=51; # Make sure the list includes i=0
-
-# # CHE
-# is_CHE = 1; metallicity = 0.0001; period_days=1; m1=55; m2=55; r1=7; r2=7; r1_core=3; r2_core=3; k1=0.024; k2=0.024;
-
-# TIC 470710327
-is_CHE = 0; metallicity = 0.142; period_days=1.1; m1=6; m2=6; r1=2.8; r2=2.8; r1_core=2.8; r2_core=2.8; k1=0.014; k2=0.014;
-
-debug_flag = False
-eps_SA_flag = True
-eps_GR_flag = True
-eps_Tides_flag = False
-
-string_to_save = "triple_Z="+str(metallicity)+"_CHE="+str(is_CHE)+"_M1=M2="+str(m2)+"_Porb="+str(period_days)
-
-if eps_SA_flag:
-    string_to_save+="_SA"
-    
-if eps_GR_flag:
-    string_to_save+="_GR"   
-    
-if eps_Tides_flag:
-    string_to_save+="_Tides"   
-    
-string_to_save+=".mat"
-print(string_to_save)
-
-cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, f_merger, m3, p2, tau_sec = calculate_e_grid(NN, Ni, m1, m2, period_days, r1, r2, r1_core, r2_core, k1, k2, eps_SA_flag, eps_GR_flag, eps_Tides_flag, debug_flag)
-
-# %%
-# SAVE
-from scipy.io import savemat
-
-print(string_to_save)
-
-mdic = {"cos_inc":cos_inc_max_ecc, "eccs":ecc_grid, "eps_SA":eps_SA, "eps_GR":eps_GR, "eps_Tide":eps_Tide, "eta":etas, "f_merger":f_merger, "m3":m3, "p2":p2, "tau_sec":tau_sec}
-savemat(string_to_save, mdic)
-
-# %%
-plt.scatter(cos_inc_max_ecc,etas)
-plt.xlabel(r'$cos(i)|_{e_{max}}$')
-plt.ylabel(r'$\eta$')
