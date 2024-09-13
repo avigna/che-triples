@@ -12,14 +12,17 @@ import compact_triple_analysis as cta
 NN=100; 
 Ni=51; # Make sure the list includes i=0
 
-# # CHE
-# is_CHE = 1; metallicity = 0.0001; period_days=1; m1=45; m2=m1; r1=7; r2=r1; r1_core=3; r2_core=r1_core; k1=0.022; k2=k1;
+# CHE at ZAMS, Z=Z_SMC
+# is_CHE = 1; metallicity = 0.0035; period_days=1.1; m1=45; m2=m1; r1=8; r2=r1; r1_core=3.2; r2_core=r1_core; k1=0.019; k2=k1;
+
+# CHE at CC, Z=Z_SMC
+is_CHE = 1; metallicity = 0.0035; period_days=4.3; m1=17.8; m2=m1; r1=0.44; r2=r1; r1_core=0.44; r2_core=r1_core; k1=0.0017; k2=k1;
 
 # # CHE
 # is_CHE = 1; metallicity = 0.0001; period_days=1; m1=55; m2=m1; r1=; r2=r1; r1_core=; r2_core=r1_core; k1=; k2=k1;
 
-# TIC 470710327
-is_CHE = 0; metallicity = 0.142; period_days=1.1; m1=6; m2=m1; r1=2.8; r2=r1; r1_core=2.8; r2_core=r1_core; k1=0.014; k2=k1;
+# # TIC 470710327
+# is_CHE = 0; metallicity = 0.142; period_days=1.1; m1=6; m2=m1; r1=2.8; r2=r1; r1_core=2.8; r2_core=r1_core; k1=0.014; k2=k1;
 
 debug_flag = False
 

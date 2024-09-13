@@ -220,10 +220,7 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     r2 = r2 * rsun / au
     m3 = np.logspace(0,2,N)
 
-#     #     For CHE
     a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(100 * a1_in_au), N)
-# #     # For TIC
-#     a2 = np.logspace(np.log10(2.5*a1_in_au), np.log10(100 * a1_in_au), N)
 
     e2 = 0
     eps_SA1 = 0
