@@ -1,0 +1,136 @@
+#!/usr/bin/env python
+import mkipp
+import kipp_data
+import mesa_data
+import matplotlib.pyplot as plt
+from matplotlib.patches import PathPatch
+import numpy as np
+
+# +
+# logs_DIR = ["../data/MESA/45Msun_ZSMC/LOGS1/"]
+# history_path = "../data/MESA/45Msun_ZSMC/LOGS1/history.data"
+# profile_path = "../data/MESA/45Msun_ZSMC/LOGS1/"
+# filename_mass = "Kippenhahn_Mass_45_Msun_Z_SMC.pdf"
+# filename_radius = "Kippenhahn_Radius_45_Msun_Z_SMC.pdf"
+
+logs_DIR = ["../data/MESA/45Msun_ZSMC/LOGS1/"]
+history_path = "../data/MESA/45Msun_ZSMC/LOGS1/history.data"
+profile_path = "../data/MESA/45Msun_ZSMC/LOGS1/"
+filename_mass = "Kippenhahn_Mass_45_Msun_Z_SMC.pdf"
+filename_radius = "Kippenhahn_Radius_45_Msun_Z_SMC.pdf"
+
+save_flag = False
+
+# +
+from matplotlib import rc
+# from matplotlib.pyplot import figure, axes, plot, xlabel, ylabel, title, \
+#      grid, savefig, show
+rc('text', usetex=True)
+rc('font', family='serif')
+rc('font', size=16)
+
+#Reading out mixing regions and data, and plotting independently
+kipp_args = mkipp.Kipp_Args(logs_dirs = logs_DIR, xaxis="star_age")
+fig = plt.figure()
+axis = plt.gca()
+profile_paths = mesa_data.get_profile_paths(logs_DIR)
+#if data is distributed among several history.data files, you can provide them
+history_paths = [history_path]
+#read profile data
+#kipp_data.get_xyz_data returns an object containing
+#   xyz_data.xlims : limits of data in x coordinate
+#   xyz_data.X     : 2D array of xaxis values of profile data
+#   xyz_data.Y     : 2D array of xaxis values of profile data
+#   xyz_data.Z     : 2D array of xaxis values of profile data
+# the last three can be used as inputs for matplotlib contour or contourf
+xyz_data = kipp_data.get_xyz_data(profile_paths, kipp_args)
+#read mixing regions 
+#kipp_data.get_mixing_zones returns an object containing
+#   mixing_zones.zones     : matplotlib Path objects for each mixing zone.
+#                            These can be plotted using add_patch(...)
+#   mixing_zones.mix_types : Integer array containing the type of each zone
+#   mixing_zones.x_coords  : x coordinates for points at the surface
+#   mixing_zones.y_coords  : y coordinates for points at the surface
+#   mixing_zones.histories : mesa_data history files to access additional data
+# the last three can be used as inputs for matplotlib contour or contourf
+mixing_zones = kipp_data.get_mixing_zones(history_paths, kipp_args, xlims = xyz_data.xlims)
+# just plot convection, overshooting and semiconvection
+for i,zone in enumerate(mixing_zones.zones):
+    color = ""
+    #Convective mixing
+    if mixing_zones.mix_types[i] == 1: #convection
+        color = '#332288'
+    #Overshooting 
+    elif mixing_zones.mix_types[i] == 3: #overshooting
+        color = '#117733'
+    #Semiconvective mixing
+    elif mixing_zones.mix_types[i] == 4: #semiconvection
+        color = '#CC6677'
+    else:
+        continue
+    axis.add_patch(PathPatch(zone, color=color, alpha = 0.5, lw = 0))
+# if (xyz_data.Z.size > 0):
+#     CS = plt.contour(xyz_data.X, xyz_data.Y, xyz_data.Z, [0,4,8], colors='k')
+#     plt.clabel(CS, inline=1, fontsize=10)
+axis.plot(mixing_zones.x_coords, mixing_zones.y_coords, 'k', lw=4)
+axis.set_xlabel("t/Myr")
+axis.set_ylabel("$m/M_{\odot}$")
+axis.set_xlim(0,max(mixing_zones.x_coords))
+axis.set_ylim(0,max(mixing_zones.y_coords))
+
+if save_flag:
+    plt.savefig(filename_mass)
+
+# +
+#Reading out mixing regions and data, and plotting independently
+kipp_args = mkipp.Kipp_Args(logs_dirs = logs_DIR, xaxis="star_age", yaxis = "radius")
+fig = plt.figure()
+axis = plt.gca()
+profile_paths = mesa_data.get_profile_paths(logs_DIR)
+#if data is distributed among several history.data files, you can provide them
+history_paths = [history_path]
+#read profile data
+#kipp_data.get_xyz_data returns an object containing
+#   xyz_data.xlims : limits of data in x coordinate
+#   xyz_data.X     : 2D array of xaxis values of profile data
+#   xyz_data.Y     : 2D array of xaxis values of profile data
+#   xyz_data.Z     : 2D array of xaxis values of profile data
+# the last three can be used as inputs for matplotlib contour or contourf
+xyz_data = kipp_data.get_xyz_data(profile_paths, kipp_args)
+#read mixing regions 
+#kipp_data.get_mixing_zones returns an object containing
+#   mixing_zones.zones     : matplotlib Path objects for each mixing zone.
+#                            These can be plotted using add_patch(...)
+#   mixing_zones.mix_types : Integer array containing the type of each zone
+#   mixing_zones.x_coords  : x coordinates for points at the surface
+#   mixing_zones.y_coords  : y coordinates for points at the surface
+#   mixing_zones.histories : mesa_data history files to access additional data
+# the last three can be used as inputs for matplotlib contour or contourf
+mixing_zones = kipp_data.get_mixing_zones(history_paths, kipp_args, xlims = xyz_data.xlims)
+# just plot convection, overshooting and semiconvection
+for i,zone in enumerate(mixing_zones.zones):
+    color = ""
+    #Convective mixing
+    if mixing_zones.mix_types[i] == 1: #convection
+        color = '#332288'
+    #Overshooting 
+    elif mixing_zones.mix_types[i] == 3: #overshooting
+        color = '#117733'
+    #Semiconvective mixing
+    elif mixing_zones.mix_types[i] == 4: #semiconvection
+        color = '#CC6677'
+    else:
+        continue
+    axis.add_patch(PathPatch(zone, color=color, alpha = 0.5, lw = 0))
+# if (xyz_data.Z.size > 0):
+#     CS = plt.contour(xyz_data.X, xyz_data.Y, xyz_data.Z, [0,4,8], colors='k')
+#     plt.clabel(CS, inline=1, fontsize=10)
+axis.plot(mixing_zones.x_coords, mixing_zones.y_coords, 'k', lw=4)
+axis.set_xlabel("t/Myr")
+axis.set_ylabel("$r/R_{\odot}$")
+axis.set_xlim(0,max(mixing_zones.x_coords))
+axis.set_ylim(0,max(mixing_zones.y_coords))
+# plt.axhline(y=3.2, color='r', linestyle='-')
+
+if save_flag:
+    plt.savefig(filename_radius)
