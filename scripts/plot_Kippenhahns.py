@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# +
 import mkipp
 import kipp_data
 import mesa_data
@@ -6,35 +7,35 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import PathPatch
 import numpy as np
 
+# import random
+# import numpy as np
+# import matplotlib
+# import matplotlib.pyplot as plt
+# from scipy.stats import kde
+import pandas as pd
+# import matplotlib.patches as mpatches
+# from scipy.signal import argrelextrema
+
 # +
-# logs_DIR = ["../data/MESA/45Msun_ZSMC/LOGS1/"]
-# history_path = "../data/MESA/45Msun_ZSMC/LOGS1/history.data"
-# profile_path = "../data/MESA/45Msun_ZSMC/LOGS1/"
-# filename_mass = "Kippenhahn_Mass_45_Msun_Z_SMC.pdf"
-# filename_radius = "Kippenhahn_Radius_45_Msun_Z_SMC.pdf"
-
-# logs_DIR = ["../data/MESA/45Msun_ZSMC/LOGS1/"]
-# history_path = "../data/MESA/45Msun_ZSMC/LOGS1/history.data"
-# profile_path = "../data/MESA/45Msun_ZSMC/LOGS1/"
-# filename_mass = "Kippenhahn_Mass_45_Msun_Z_SMC.pdf"
-# filename_radius = "Kippenhahn_Radius_45_Msun_Z_SMC.pdf"
-
 # logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"]
 # history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
 # profile_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"
-# filename_mass = "Kippenhahn_Mass_55_Msun_Z_SMC.pdf"
-# filename_radius = "Kippenhahn_Radius_55_Msun_Z_SMC.pdf"
+# filename_mass = "../plots/pdf/55_Msun_Z_SMC/Kippenhahn_Mass_55_Msun_Z_SMC.pdf"
+# filename_radius = "../plots/pdf/55_Msun_Z_SMC/Kippenhahn_Radius_55_Msun_Z_SMC.pdf"
 
 logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"]
 history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
 profile_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"
-filename_mass = "Kippenhahn_Mass_55_Msun_0_1_Z_SMC.pdf"
-filename_radius = "Kippenhahn_Radius_55_Msun_0_1_Z_SMC.pdf"
+filename_mass = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Mass_55_Msun_low_Z.pdf"
+filename_radius = "../plots/pdf/55_Msun_low_Z/pdfKippenhahn_Radius_55_Msun_low_Z.pdf"
+
+df = pd.read_csv(history_path,  header=4, skiprows=0, delimiter='\s+',usecols=['age','apsidal_constant_k2'])
 
 save_flag = True
 
 # +
 from matplotlib import rc
+import matplotlib.ticker as ticker
 # from matplotlib.pyplot import figure, axes, plot, xlabel, ylabel, title, \
 #      grid, savefig, show
 rc('text', usetex=True)
@@ -90,8 +91,19 @@ axis.set_ylabel("$m/M_{\odot}$")
 axis.set_xlim(0,max(mixing_zones.x_coords))
 axis.set_ylim(0,max(mixing_zones.y_coords))
 
+ax2 = axis.twinx()  # instantiate a second Axes that shares the same x-axis
+# color = '#9F4A54'
+color = 'tab:red'
+ax2.set_ylabel('k$_2$', color=color)  # we already handled the x-label with ax1
+ax2.plot(df['age']*10**-6, df['apsidal_constant_k2'], color=color, lw=2)
+ax2.tick_params(axis='y', labelcolor=color)
+ax2.set_ylim([0, 0.025])
+
 if save_flag:
-    plt.savefig(filename_mass)
+    plt.savefig(filename_mass, bbox_inches='tight')
+# -
+
+
 
 # +
 #Reading out mixing regions and data, and plotting independently
@@ -144,5 +156,14 @@ axis.set_xlim(0,max(mixing_zones.x_coords))
 axis.set_ylim(0,max(mixing_zones.y_coords))
 # plt.axhline(y=3.2, color='r', linestyle='-')
 
+ax2 = axis.twinx()  # instantiate a second Axes that shares the same x-axis
+# color = '#9F4A54'
+# color = '#E8AA14'
+color = 'tab:red'
+ax2.set_ylabel('k$_2$', color=color)  # we already handled the x-label with ax1
+ax2.plot(df['age']*10**-6, df['apsidal_constant_k2'], color=color, lw=2)
+ax2.tick_params(axis='y', labelcolor=color)
+ax2.set_ylim([0, 0.025])
+
 if save_flag:
-    plt.savefig(filename_radius)
+    plt.savefig(filename_radius, bbox_inches='tight')
