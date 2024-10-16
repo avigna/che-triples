@@ -13,13 +13,25 @@ import numpy as np
 # filename_mass = "Kippenhahn_Mass_45_Msun_Z_SMC.pdf"
 # filename_radius = "Kippenhahn_Radius_45_Msun_Z_SMC.pdf"
 
-logs_DIR = ["../data/MESA/45Msun_ZSMC/LOGS1/"]
-history_path = "../data/MESA/45Msun_ZSMC/LOGS1/history.data"
-profile_path = "../data/MESA/45Msun_ZSMC/LOGS1/"
-filename_mass = "Kippenhahn_Mass_45_Msun_Z_SMC.pdf"
-filename_radius = "Kippenhahn_Radius_45_Msun_Z_SMC.pdf"
+# logs_DIR = ["../data/MESA/45Msun_ZSMC/LOGS1/"]
+# history_path = "../data/MESA/45Msun_ZSMC/LOGS1/history.data"
+# profile_path = "../data/MESA/45Msun_ZSMC/LOGS1/"
+# filename_mass = "Kippenhahn_Mass_45_Msun_Z_SMC.pdf"
+# filename_radius = "Kippenhahn_Radius_45_Msun_Z_SMC.pdf"
 
-save_flag = False
+# logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"]
+# history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
+# profile_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"
+# filename_mass = "Kippenhahn_Mass_55_Msun_Z_SMC.pdf"
+# filename_radius = "Kippenhahn_Radius_55_Msun_Z_SMC.pdf"
+
+logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"]
+history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
+profile_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"
+filename_mass = "Kippenhahn_Mass_55_Msun_0_1_Z_SMC.pdf"
+filename_radius = "Kippenhahn_Radius_55_Msun_0_1_Z_SMC.pdf"
+
+save_flag = True
 
 # +
 from matplotlib import rc

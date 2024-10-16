@@ -39,19 +39,16 @@ apsidal_constant_k2 = df['apsidal_constant_k2']
 
 
 # +
-n = 5  # number of points to be checked before and after
+idx=np.argmax(apsidal_constant_k2)
+
 # Find local peaks
+n = 5  # number of points to be checked before and after
 retrieve_min = log_R.iloc[argrelextrema(log_R.values, np.less_equal, order=n)[0]]
 
-idx=np.argmax(apsidal_constant_k2)
-# -
 
-# ZAMS_L2_overflow
-# L2_overflow
-# off_CHE
-# PISN
-# PPISN
-# dir_coll
+if debug_flag:
+    plt.plot(age,10**log_R)
+    plt.scatter(age[retrieve_min.index], 10**log_R[retrieve_min.index], c='r')
 
 # +
 from matplotlib import rc
@@ -71,26 +68,30 @@ plt.savefig(filename_full, bbox_inches='tight')
 plt.show()
 # -
 
-plt.plot(age,10**log_R)
-plt.scatter(age[retrieve_min.index], 10**log_R[retrieve_min.index], c='r')
-
 if debug_flag:
     print(max(apsidal_constant_k2))
     print(max(mass_conv_core))
 
-# +
-
-print(age[idx])
+if debug_flag:
+    print(age[idx])
     print(apsidal_constant_k2[idx])
     print(period_days[idx])
     print(10**log_R[idx])
     print(mass_conv_core[idx])
-# -
 
-print(age[retrieve_min.index])
-print(apsidal_constant_k2[retrieve_min.index])
-print(period_days[retrieve_min.index])
-print(10**log_R[retrieve_min.index])
-print(mass_conv_core[retrieve_min.index])
+if debug_flag:
+    print(age[retrieve_min.index])
+    print(apsidal_constant_k2[retrieve_min.index])
+    print(period_days[retrieve_min.index])
+    print(10**log_R[retrieve_min.index])
+    print(mass_conv_core[retrieve_min.index])
+    print(mass[retrieve_min.index])
+
+print(age.values[-1])
+print(apsidal_constant_k2.values[-1])
+print(period_days.values[-1])
+print(10**log_R.values[-1])
+print(mass_conv_core.values[-1])
+print(mass.values[-1])
 
 
