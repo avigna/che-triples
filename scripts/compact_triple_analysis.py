@@ -89,7 +89,7 @@ def epsilon_tide(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2):
 def epsilon_oct(m1, m2, a1, a2, e2):
     return (m1-m2)/(m1+m2)* (a1/a2) * e2/(1-e2**2)
 
-def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100):
+def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100, debug=False):
     cosi_0, ETA, eps_SA1, eps_GR1, eps_Tide1 = args
     """
     Bisection method for finding a root of a real-valued function.
@@ -106,8 +106,9 @@ def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100):
         float: Approximation of the root.
     """
     if func(a, *args) * func(b, *args) >= 0:
-        print ('no solution for eps_gr = ', eps_GR1, 'eps_tide = ', eps_Tide1, 'cos_0 = ', cosi_0)
-       # raise ValueError("Function does not change sign over the interval [a, b].")
+        if debug:
+            print ('no solution for eps_gr = ', eps_GR1, 'eps_tide = ', eps_Tide1, 'cos_0 = ', cosi_0, "e_max = 0")
+       
         return 0
 
     iteration = 0
@@ -240,7 +241,7 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
         cos_inc = 0
     else:
         cos_incs=np.linspace(-1,1,Ni)
-        print(cos_incs)
+#         print(cos_incs)
         ec_max_temp = 0.0
         cos_inc_temp = []
     
@@ -282,9 +283,11 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
                     
                 ecc_grid[i][j] = ec
                 cos_inc_max_ecc[i][j] = cos_inc_temp
-                print(N_merger)
+#                 print(N_merger)
                 f_merger[i][j] = N_merger/Ni
             
     p2 = [2*np.pi* ((x*au)**3 / G / msun / (m1+m2))**0.5/day_to_s  for x in a2]
 
     return cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, f_merger, m3, p2, tau_sec
+
+# %%
