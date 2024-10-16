@@ -99,9 +99,15 @@ ax2.plot(df['age']*10**-6, df['apsidal_constant_k2'], color=color, lw=2)
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylim([0, 0.025])
 
+# ax2.set_yticks([0, 0.01, 0.02])
+# yticks = [0, 0.01, 0.02]
+# ylabels = [f'{x:1.2f}' for x in yticks]
+# ax2.set_yticks(yticks, labels=ylabels)
+
 if save_flag:
     plt.savefig(filename_mass, bbox_inches='tight')
 # -
+
 
 
 
