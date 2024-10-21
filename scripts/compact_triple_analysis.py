@@ -219,9 +219,9 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     a1_in_au = a1_cubed**(1/3) / au
     r1 = r1 * rsun / au
     r2 = r2 * rsun / au
-    m3 = np.linspace(1,100,N)
+    m3 = np.logspace(0,2,N)
 
-    a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(500 * a1_in_au), N)
+    a2 = np.logspace(np.log10(2 * a1_in_au), np.log10(200 * a1_in_au), N)
 
     e2 = 0
     eps_SA1 = 0
@@ -241,7 +241,7 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
         cos_inc = 0
     else:
         cos_incs=np.linspace(-1,1,Ni)
-#         print(cos_incs)
+        print(cos_incs)
         ec_max_temp = 0.0
         cos_inc_temp = []
     
@@ -289,3 +289,5 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     p2 = [2*np.pi* ((x*au)**3 / G / msun / (m1+m2))**0.5/day_to_s  for x in a2]
 
     return cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, f_merger, m3, p2, tau_sec
+
+# %%

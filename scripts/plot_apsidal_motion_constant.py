@@ -86,6 +86,7 @@ if debug_flag:
     print(10**log_R[retrieve_min.index])
     print(mass_conv_core[retrieve_min.index])
     print(mass[retrieve_min.index])
+    print(log_L[retrieve_min.index])
 
 print(age.values[-1])
 print(apsidal_constant_k2.values[-1])
@@ -93,5 +94,3 @@ print(period_days.values[-1])
 print(10**log_R.values[-1])
 print(mass_conv_core.values[-1])
 print(mass.values[-1])
-
-

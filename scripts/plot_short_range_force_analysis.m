@@ -1,11 +1,7 @@
-function plot_short_range_force_analysis(debug_flag, save_flag)
+function plot_short_range_force_analysis(debug_flag, annotations_flag, save_flag)
 % Function created by Alejandro Vigna-Gomez
 % debug_flag: bool
 % save_flag: bool
-
-% TIC 470710327
-P_out_TIC = 52.04;
-m_out_TIC = 15.5;
 
 % Functions
 % Kepler's law
@@ -14,19 +10,24 @@ orbital_period_yr       = @(a_AU, M_Msun) sqrt((a_AU.^3.0)./(M_Msun));
 P_out_eta_unity_days    = @(m, P_d, m3) (2^-4).*m.*m.*(1./(m3.^3.0)).*(2*m+m3)*P_d;
 
 % Stability criteria
-% a_out_stability_MA01 = @(a_in, q_out, e_out, i_mut) (2.8*((1+q_out).*((1+e_out)./sqrt((1-e_out))).^(2.0/5)).*(1-(0.3.*i_mut/pi))).*a_in;
-% a_out_stability_Vynatheya_simple = @(a_in, q_out, i_mut) (2.4*((1+q_out).^(2.0/5)).*(((cos(i_mut)-1)./8.0)+1)).*a_in;
-% Y_crit = @(q_out, e_in_tilde, e_out, i_mut) 2.4 * ((1 + q_out) / ((1 + e_in_tilde) * (1 - e_out)^(1/2)))^(2/5) ...
-%     * (((1 - 0.2 * e_in_tilde + e_out) / 8) * (cos(i_mut) - 1) + 1);
-a_out_stability_MA01_circular         = @(a_in, q_out, i_mut_rad) (2.8*((1+q_out).^(2.0/5))).*a_in;
 a_out_stability_Vynatheya_circular    = @(a_in, q_out, i_mut) (2.4*((1+q_out).^(2.0/5)).*(((cos(i_mut)-1)./8.0)+1)).*a_in;
 
 % DATA
-% filename            = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=55_Porb=1_SA_GR_Tides.mat';
-title_string        = 'm_1=m_2=45 Msun, P_{orb}=1 d, Z=0.0001';
-mass_Msun           = 45;
-radius_Rsun         = 7;
-orbital_period_days = 1.0; 
+% # 0.1 Z_SMC
+% idx_0_1_Z_SMC = [47, 1784, 2132, 2504]
+% age_yr_0_1_Z_SMC = [5.329669e+03, 5.120677e+06, 5.307573e+06, 5316369.558564772]
+% apsidal_constant_k2_0_1_Z_SMC = [0.023533, 0.008881, 0.004897, 0.0007136587012452427]
+% period_days_0_1_Z_SMC = [1.099654, 1.450562, 1.668519, 1.6824947859764587]
+% radius_Rsun_0_1_Z_SMC = [7.577242, 2.401224, 1.939817, 0.8534730543749688]
+% mass_conv_core_Msun_0_1_Z_SMC = [37.805430, 41.412994, 38.487511, 0.0]
+% mass_Msun_0_1_Z_SMC = [54.999836, 43.976249, 43.793192, 43.79319230382309]
+title_string        = 'm_1=m_2=55 Msun, P_{orb}=1.1 d, Z=0.00035';
+mass_Msun               = 55;
+% mass_conv_core_Msun     = 30.1;
+% radius_conv_core_Rsun   = 3.2;
+radius_Rsun             = round(7.577242,2);
+orbital_period_days     = 1.1; 
+% luminosity_Lsun         = 10^5.5; % Pending value
 
 % Calculate extra values
 orbital_period_year = orbital_period_days./AstroConstants.yr_to_d;
@@ -44,51 +45,55 @@ end
 list_plot = {'Test particle','ZKL','SA','SA+GR','SA+Tides','GR','GR+Tides','Tides','SA+GR+Tides'};
 [indx_plot, tf_plot] = listdlg('ListString',list_plot);
 
+color_title = 'k';
 if indx_plot==1
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1.mat';
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_test_particle.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_test_particle.pdf';
-    title_legend    = '$\bf ZKL\ test\ particle\ limit$'
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654.mat';
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_test_particle.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_test_particle.pdf';
+    title_legend    = '$\rm ZKL\ test\ particle\ limit$'
+    color_title = 'w';
 elseif indx_plot==2
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1.mat';    
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_ZKL.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_ZKL.pdf';
-    title_legend    = '$\bf a)\ ZKL$'
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654.mat';    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_ZKL.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_ZKL.pdf';
+    title_legend    = '$\rm a)\ ZKL$'
+    color_title = 'w';    
 elseif indx_plot==3
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_SA.mat';
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_SA.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_SA.pdf';   
-    title_legend    = '$\bf b)\ ZKL+SA$'    
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA.mat';
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA.pdf';   
+    title_legend    = '$\rm b)\ ZKL+SA$'    
+    color_title = 'w';    
 elseif indx_plot==4
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_SA_GR.mat';
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_SA_GR.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_SA_GR.pdf';
-    title_legend    = '$\bf e)\ ZKL+SA+GR$'    
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR.mat';
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR.pdf';
+    title_legend    = '$\rm e)\ ZKL+SA+GR$'    
 elseif indx_plot==5
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_SA_Tides.mat';    
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_SA_Tides.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_SA_Tides.pdf';
-    title_legend    = '$\bf f)\ ZKL+SA+Tides$'    
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_Tides.mat';    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_Tides.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_Tides.pdf';
+    title_legend    = '$\rm f)\ ZKL+SA+Tides$'    
 elseif indx_plot==6
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_GR.mat';    
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_GR.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_GR.pdf';
-    title_legend    = '$\bf c)\ ZKL+GR$'    
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_GR.mat';    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_GR.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_GR.pdf';
+    title_legend    = '$\rm c)\ ZKL+GR$'    
 elseif indx_plot==7
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_GR_Tides.mat';    
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_GR_Tides.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_GR_Tides.pdf';
-    title_legend    = '$\bf g)\ ZKL+GR+Tides$'    
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_GR_Tides.mat';    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_GR_Tides.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_GR_Tides.pdf';
+    title_legend    = '$\rm g)\ ZKL+GR+Tides$'    
 elseif indx_plot==8
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_Tides.mat';    
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_Tides.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_Tides.pdf';
-    title_legend    = '$\bf d)\ ZKL+Tides$'    
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_Tides.mat';    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_Tides.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_Tides.pdf';
+    title_legend    = '$\rm d)\ ZKL+Tides$'    
 elseif indx_plot==9
-    filename        = '../data/dynamics/45_Msun/triple_Z=0.0001_CHE=1_M1=M2=45_Porb=1_SA_GR_Tides.mat';    
-    plot_label_png  = '../plots/png/CHE-short-range-force-analysis_SA_GR_Tides.png';
-    plot_label_pdf  = '../plots/pdf/CHE-short-range-force-analysis_SA_GR_Tides.pdf';
-    title_legend    = '$\bf h)\ ZKL+SA+GR+Tides$'    
+    filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR_Tides.mat';    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_Tides.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_Tides.pdf';
+    title_legend    = '$\rm h)\ ZKL+SA+GR+Tides$'    
 else
     warning("Odd choice.")
 end  
@@ -100,11 +105,11 @@ e_max                           = M.eccs;
 [X, Y]                          = meshgrid(m3, Pout);
 
 % Some quantities
-num_dots = 1000;
+% num_dots = 1000;
 % separation_inner_AU = separation_inner/AstroConstants.AU_to_Rsun;
-Minner = 2*mass_Msun;
+% Minner = 2*mass_Msun;
 Pdays = [1 5 6 10 30 50 100 500 1000];
-Pyears = Pdays./AstroConstants.yr_to_d;
+% Pyears = Pdays./AstroConstants.yr_to_d;
 
 if debug_flag
     Pdays(2)
@@ -114,34 +119,25 @@ end
 
 % Calculate eta=1
 mock_mass = linspace(1,100,1001);
-YY = P_out_eta_unity_days(mass_Msun,orbital_period_days,mock_mass);
+% YY = P_out_eta_unity_days(mass_Msun,orbital_period_days,mock_mass);
 
 q_out = mock_mass./(mass_Msun+mass_Msun);
-crit_stability_MA01_a_AU            = a_out_stability_MA01_circular(separation_inner_AU, q_out, 0.0);
-crit_stability_MA01_P_orb_yr        = orbital_period_yr(crit_stability_MA01_a_AU, mass_Msun+mass_Msun+mock_mass);
-crit_stability_MA01_P_orb_d         = crit_stability_MA01_P_orb_yr.*AstroConstants.yr_to_d;
-
 crit_stability_Vynatheya_a_AU      = a_out_stability_Vynatheya_circular(separation_inner_AU, q_out, 0.0);
 crit_stability_Vynatheya_P_orb_yr  = orbital_period_yr(crit_stability_Vynatheya_a_AU, mass_Msun+mass_Msun+mock_mass);
 crit_stability_Vynatheya_P_orb_d   = crit_stability_Vynatheya_P_orb_yr.*AstroConstants.yr_to_d;
+crit_stability_P_orb_d = crit_stability_Vynatheya_P_orb_d;
+
+% Filtering mergers
+e_lim_val           = 1-(2*radius_Rsun/(separation_inner_AU.*AstroConstants.AU_to_Rsun));
+e_tol               = 0.0075;
+idx_of_eccentricity = find((e_max'<=e_lim_val+e_tol)&(e_max'>=e_lim_val-e_tol));
 
 % PLOT
-list_stability = {'MA01','Vynatheya'};
-[indx_stability, tf_stability] = listdlg('ListString',list_stability);
-
-if indx_stability==1
-    crit_stability_P_orb_d = crit_stability_MA01_P_orb_d;
-elseif indx_stability==2
-    crit_stability_P_orb_d = crit_stability_Vynatheya_P_orb_d;
-else
-    warning("Odd choice.")
-end  
-
-
-solar=char(9737);
 sz = 145.0;
-lw=2.0;
 fs=18;
+
+% Colors
+lines1 = [0    0.4470    0.7410];
 
 dark_grey   = 0.3.*[1 1 1];
 light_grey  = 0.6.*[1 1 1];    
@@ -162,6 +158,8 @@ xLimsLabels = {'1','10','100'};
 yLims       = [1 1000];
 yLimsLabels = {'1','10','100','1000'};
 
+text_x_coord = 1.2;
+
 leveler     = 2;
 
 clf
@@ -173,6 +171,7 @@ cbar.FontSize = fs;
 colormap(flip(pink))
 cbar.Label.String = '$e_{\rm{max}}$';
 cbar.Label.Interpreter = 'latex';
+cbar.XTick = [0:0.2:1];
 
 if indx_plot==1
     e_max_ZKL_test_particle = ones(size(e_max));
@@ -190,10 +189,14 @@ unstableRegion = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_sta
 unstableRegion.EdgeColor = 'none';
 unstableRegion.FaceColor = dark_grey;
 unstableRegion.HandleVisibility = 'off';
-text(1.2,1.75,leveler,'Dynamically Unstable','Color','w','Fontsize',fs)
+text(text_x_coord,2,leveler+1,'Dynamically Unstable','Color','w','Fontsize',fs)
 
-% title(title_legend)
-text(1.2,500,leveler, title_legend,'Color','k','Fontsize',fs)
+text(1.2,500,leveler, title_legend,'Color',color_title,'Fontsize',fs)
+
+if annotations_flag
+ % plot3(mock_mass,YY,ones(size(YY)),'Color',lines1,'Linewidth',lw)
+    % scatter3(X(idx_of_eccentricity),Y(idx_of_eccentricity),1000.*ones(size(X(idx_of_eccentricity))),20,lines1,'s','filled')
+end
 
 ylabel('$P_{\rm{out}}/\rm{d}$')
 xlabel('$m_3/M_{\odot}$')
@@ -209,6 +212,8 @@ ax1.XTickLabels = xLimsLabels;
 ax1.YTickLabels = yLimsLabels;
 ax1.TickLabelInterpreter = 'latex';
 set(cbar,'TickLabelInterpreter','latex')
+
+
 box on
 
 colormap(flip(pink(100)))
