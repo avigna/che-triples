@@ -42,58 +42,58 @@ if debug_flag
 end
 
 % Choose plot
-list_plot = {'Test particle','ZKL','SA','SA+GR','SA+Tides','GR','GR+Tides','Tides','SA+GR+Tides'};
+list_plot = {'Test particle','ZLK','SA','SA+GR','SA+Tides','GR','GR+Tides','Tides','SA+GR+Tides'};
 [indx_plot, tf_plot] = listdlg('ListString',list_plot);
 
 color_title = 'k';
 if indx_plot==1
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654.mat';
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_test_particle.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_test_particle.pdf';
-    title_legend    = '$\rm ZKL\ test\ particle\ limit$'
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_test_particle_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_test_particle_low_Z.pdf';
+    title_legend    = '$\rm ZLK\ test\ particle\ limit$'
     color_title = 'w';
 elseif indx_plot==2
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654.mat';    
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_ZKL.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_ZKL.pdf';
-    title_legend    = '$\rm a)\ ZKL$'
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_ZLK_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_ZLK_low_Z.pdf';
+    title_legend    = '$\rm a)\ ZLK+DA$'
     color_title = 'w';    
 elseif indx_plot==3
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA.mat';
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA.pdf';   
-    title_legend    = '$\rm b)\ ZKL+SA$'    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_low_Z.pdf';   
+    title_legend    = '$\rm b)\ ZLK+SA$'    
     color_title = 'w';    
 elseif indx_plot==4
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR.mat';
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR.pdf';
-    title_legend    = '$\rm e)\ ZKL+SA+GR$'    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_low_Z.pdf';
+    title_legend    = '$\rm e)\ ZLK+SA+GR$'    
 elseif indx_plot==5
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_Tides.mat';    
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_Tides.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_Tides.pdf';
-    title_legend    = '$\rm f)\ ZKL+SA+Tides$'    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_Tides_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_Tides_low_Z.pdf';
+    title_legend    = '$\rm f)\ ZLK+SA+Tides$'    
 elseif indx_plot==6
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_GR.mat';    
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_GR.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_GR.pdf';
-    title_legend    = '$\rm c)\ ZKL+GR$'    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_GR_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_GR_low_Z.pdf';
+    title_legend    = '$\rm c)\ ZLK+DA+GR$'    
 elseif indx_plot==7
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_GR_Tides.mat';    
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_GR_Tides.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_GR_Tides.pdf';
-    title_legend    = '$\rm g)\ ZKL+GR+Tides$'    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_GR_Tides_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_GR_Tides_low_Z.pdf';
+    title_legend    = '$\rm g)\ ZLK+DA+GR+Tides$'    
 elseif indx_plot==8
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_Tides.mat';    
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_Tides.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_Tides.pdf';
-    title_legend    = '$\rm d)\ ZKL+Tides$'    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_Tides_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_Tides_low_Z.pdf';
+    title_legend    = '$\rm d)\ ZLK+DA+Tides$'    
 elseif indx_plot==9
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR_Tides.mat';    
-    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_Tides.png';
-    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_Tides.pdf';
-    title_legend    = '$\rm h)\ ZKL+SA+GR+Tides$'    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_Tides_low_Z.png';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_Tides_low_Z.pdf';
+    title_legend    = '$\rm h)\ ZLK+SA+GR+Tides$'    
 else
     warning("Odd choice.")
 end  
@@ -134,7 +134,8 @@ idx_of_eccentricity = find((e_max'<=e_lim_val+e_tol)&(e_max'>=e_lim_val-e_tol));
 
 % PLOT
 sz = 145.0;
-fs=18;
+fs=21;
+chosen_aspect = 1.5;
 
 % Colors
 lines1 = [0    0.4470    0.7410];
@@ -168,14 +169,14 @@ set(gca,'DefaultLegendInterpreter','latex')
 hold on
 cbar = colorbar;
 cbar.FontSize = fs;
-colormap(flip(pink))
+colormap(flip(pink(100)))
 cbar.Label.String = '$e_{\rm{max}}$';
 cbar.Label.Interpreter = 'latex';
 cbar.XTick = [0:0.2:1];
 
 if indx_plot==1
-    e_max_ZKL_test_particle = ones(size(e_max));
-    mm=mesh(X, Y, e_max_ZKL_test_particle');
+    e_max_ZLK_test_particle = ones(size(e_max));
+    mm=mesh(X, Y, e_max_ZLK_test_particle');
 else
     mm=mesh(X, Y, e_max');
 end
@@ -200,7 +201,7 @@ end
 
 ylabel('$P_{\rm{out}}/\rm{d}$')
 xlabel('$m_3/M_{\odot}$')
-pbaspect([2 1 1])
+pbaspect([chosen_aspect 1 1])
 ax1 = gca;
 ax1.Layer = 'top';
 ax1.FontSize = fs;
@@ -216,7 +217,7 @@ set(cbar,'TickLabelInterpreter','latex')
 
 box on
 
-colormap(flip(pink(100)))
+% colormap(flip(pink(100)))
 
 % Save
 if save_flag

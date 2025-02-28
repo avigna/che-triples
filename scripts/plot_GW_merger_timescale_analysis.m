@@ -14,7 +14,7 @@ a_out_stability_Vynatheya_circular   = @(a_in, q_out, i_mut) (2.4*((1+q_out).^(2
 
 % DATA
 % Choose metallicity
-list_plot = {'Z_{SMC}','0.1Z_{SMC}'};
+list_plot = {'high Z','low Z'};
 [indx_plot, tf_plot] = listdlg('ListString',list_plot);
 
 
@@ -33,8 +33,8 @@ if indx_plot==1
     mass_Msun_end           = round(18.619564,2);
     orbital_period_days_end = round(4.525685,2);    
 
-    plot_label_png          = '../plots/png/CHE-GW-timescale-analysis_Z_SMC';
-    plot_label_pdf          = '../plots/pdf/CHE-GW-timescale-analysis_Z_SMC';    
+    plot_label_png          = '../plots/png/CHE-GW-timescale-analysis_high_Z';
+    plot_label_pdf          = '../plots/pdf/CHE-GW-timescale-analysis_high_Z';    
 elseif indx_plot==2
     filename_ZAMS   = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR_Tides.mat';
     mass_Msun_ZAMS          = round(54.999836,2);
@@ -70,13 +70,12 @@ m3_HeMS                     = M_HeMS.m3;
 Pout_HeMS                   = M_HeMS.p2;
 
 % Load '55+55 CHE' at end
-M_end_GR                    = load(filename_end);
+M_end_GR                    = load(filename_end)
 e_max_end_GR                = M_end_GR.eccs;
 m3_end_GR                   = M_end_GR.m3;
 Pout_end_GR                 = M_end_GR.p2;
 
-max(max(Pout_end_GR))
-
+M_end_GR.cos_inc
 % Calculate extra values
 orbital_period_year_ZAMS    = orbital_period_days_ZAMS./AstroConstants.yr_to_d;
 separation_inner_AU_ZAMS    = separation_in_AU(orbital_period_year_ZAMS,mass_Msun_ZAMS+mass_Msun_ZAMS);
@@ -87,7 +86,7 @@ separation_inner_AU_HeMS    = separation_in_AU(orbital_period_year_HeMS,mass_Msu
 orbital_period_year_end     = orbital_period_days_end./AstroConstants.yr_to_d;
 separation_inner_AU_end     = separation_in_AU(orbital_period_year_end,mass_Msun_end+mass_Msun_end);
 
-T_c_s_end                   = calculate_Tc(separation_inner_AU_end,mass_Msun_end,mass_Msun_end);
+T_c_s_end                   = calculate_merger_time_circular_binary(separation_inner_AU_end,mass_Msun_end,mass_Msun_end);
 T_c_yr_end                  = T_c_s_end.*AstroConstants.s_to_yr
 
 % Based on eq. 48 of Liu & Lai (2018)
@@ -130,7 +129,7 @@ idx_of_eccentricity_HeMS  = find((e_max_HeMS'>=e_lim_val_HeMS)&(m3_HeMS<99));
 
 % PLOT
 fs=18;
-sz2=10;
+sz2=20;
 leveler = 11;
 lw = 2.5;
 
@@ -164,12 +163,17 @@ chosen_color_He_mergers = light_grey;
 
 text_x_coord = 1.2;
 
+chosen_aspect = 1.5;
+
 % Limits
 xLims           = [1 100];
 xLimsLabels     = {'1','10','100'};
 yLims           = [1 3000];
 yTicksValues    = [1 10 100 1000];
 yLimsLabels     = {'1','10','100','1000'};
+
+% fig = figure;
+% orient(fig,'landscape')
 
 clf
 set(gca,'defaulttextinterpreter','latex')
@@ -181,7 +185,7 @@ cbar.Label.Interpreter = 'latex';
 cbar.XTick = [0:2:10];
 
 % GW timescale
-cbar.Label.String = '$\log_{10} (\tau_{\rm{BBH,merge}}/\rm{yr})$';
+cbar.Label.String = '$\log_{10} (\tau_{\rm{merge}}/\rm{yr})$';
 mm_tau_sec=mesh(X_end_GR, Y_end_GR, log10(tau_ZKL_GW_yr_end'),'HandleVisibility','off');
 scatter(60, 6000, 1, 10,'HandleVisibility','off');
 % scatter(60, 6000, 1, 9,'HandleVisibility','off');
@@ -201,10 +205,10 @@ unstableRegion_ZAMS.HandleVisibility = 'off';
 
 text(text_x_coord,2,leveler+1,'Dynamically Unstable','Color','w','Fontsize',fs)
 if indx_plot==1
-    text(2,34,leveler,'He Merger','Color','w','Fontsize',fs)
+    text(2,34,leveler,'He Merger','Color','k','Fontsize',fs)
     text(text_x_coord,8,leveler,'Main-Sequence Merger','Color','w','Fontsize',fs)
 elseif indx_plot==2
-    text(2.9,22,leveler,'He Merger','Color','w','Fontsize',fs)
+    text(2.9,22,leveler,'He Merger','Color','k','Fontsize',fs)
     text(text_x_coord,7,leveler,'Main-Sequence Merger','Color','w','Fontsize',fs)
 else
     warning("Odd choice.")
@@ -216,7 +220,7 @@ xline(mass_Msun_ZAMS,'--','Color','g','LineWidth',lw)
 legend('$m_3=m_{1,\rm{ZAMS}}$','Location','NorthWest','interpreter','latex','Box','Off')
 ylabel('$P_{\rm{out}}/\rm{d}$')
 xlabel('$m_3/M_{\odot}$')
-pbaspect([2 1 1])
+pbaspect([chosen_aspect 1 1])
 ax1 = gca;
 ax1.Layer = 'top';
 ax1.FontSize = fs;
@@ -239,12 +243,4 @@ if save_flag
     print(gcf,plot_label_pdf,'-dpdf');    
 end
 
-end
-
-function T_c_s = calculate_Tc(a0_AU, M1_Msun, M2_Msun)
-M1_kg   = M1_Msun.*AstroConstants.Msun_kg;
-M2_kg   = M2_Msun.*AstroConstants.Msun_kg;
-a0_m    = a0_AU.*AstroConstants.AU_to_m;
-
-T_c_s = (5 * AstroConstants.c_mks^5 * a0_m.^4)./(256 * AstroConstants.G_mks^3 * M1_kg * M2_kg * (M1_kg + M2_kg));
 end

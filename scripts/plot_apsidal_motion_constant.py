@@ -10,13 +10,13 @@ from scipy.signal import argrelextrema
 debug_flag = True
 
 # +
-# history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
-# filename = "apsidal_plot_55_Msun_Z_SMC.pdf"
-# filename_full = "apsidal_plot_55_Msun_Z_SMC_full.pdf"
+history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
+filename = "apsidal_plot_55_Msun_Z_SMC.pdf"
+filename_full = "apsidal_plot_55_Msun_Z_SMC_full.pdf"
 
-history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
-filename = "apsidal_plot_55_Msun_0_1_Z_SMC.pdf"
-filename_full = "apsidal_plot_55_Msun_0_1_Z_SMC_full.pdf"
+# history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
+# filename = "apsidal_plot_55_Msun_0_1_Z_SMC.pdf"
+# filename_full = "apsidal_plot_55_Msun_0_1_Z_SMC_full.pdf"
 
 df = pd.read_csv(history_path,  header=4, skiprows=0, delimiter='\s+',usecols=['age','apsidal_constant_k2','center_h1','center_he4','star_mass','log_R','mass_conv_core','log_Teff','log_L','period_days'])
 # -
@@ -94,3 +94,7 @@ print(period_days.values[-1])
 print(10**log_R.values[-1])
 print(mass_conv_core.values[-1])
 print(mass.values[-1])
+
+
+
+

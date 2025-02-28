@@ -25,7 +25,7 @@ apsidal_constant_k2_0_1_Z_SMC = [0.023533, 0.008881, 0.004897, 0.000713658701245
 period_days_0_1_Z_SMC = [1.099654, 1.450562, 1.668519, 1.6824947859764587]
 radius_Rsun_0_1_Z_SMC = [7.577242, 2.401224, 1.939817, 0.8534730543749688]
 mass_conv_core_Msun_0_1_Z_SMC = [37.805430, 41.412994, 38.487511, 0.0]
-mass_Msun_0_1_Z_SMC = [54.999836, 43.976249, 43.793192, 43.79319230382309]
+mass_Msun_0_1_Z_SMC = [54.999836, 47.137282, 43.793192, 43.79319230382309]
 
 # %%
 # DEFINE SYSTEM
@@ -70,13 +70,13 @@ Ni=181; # Make sure the list includes i=0
 
 #-----------------------------------------------------------------------------------#
 # Z=0.1Z_SMC: 55+55 Msun circular binary with a 1.1 d orbital period (at ZAMS)
-# # Evaluated at ZAMS
-# chosen_metallicity = 0.00035;
-# chosen_apsidal_constant_k2 = apsidal_constant_k2_0_1_Z_SMC[0];
-# chosen_mass_Msun = mass_Msun_0_1_Z_SMC[0];
-# chosen_period_days = period_days_0_1_Z_SMC[0];
-# chosen_radius_Rsun = radius_Rsun_0_1_Z_SMC[0];
-# flag_CHE = 1;
+# Evaluated at ZAMS
+chosen_metallicity = 0.00035;
+chosen_apsidal_constant_k2 = apsidal_constant_k2_0_1_Z_SMC[0];
+chosen_mass_Msun = mass_Msun_0_1_Z_SMC[0];
+chosen_period_days = period_days_0_1_Z_SMC[0];
+chosen_radius_Rsun = radius_Rsun_0_1_Z_SMC[0];
+flag_CHE = 1;
 
 # # Evaluated at HeMS
 # chosen_metallicity = 0.00035;

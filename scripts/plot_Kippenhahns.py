@@ -17,17 +17,19 @@ import pandas as pd
 # from scipy.signal import argrelextrema
 
 # +
-# logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"]
-# history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
-# profile_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"
-# filename_mass = "../plots/pdf/55_Msun_Z_SMC/Kippenhahn_Mass_55_Msun_Z_SMC.pdf"
-# filename_radius = "../plots/pdf/55_Msun_Z_SMC/Kippenhahn_Radius_55_Msun_Z_SMC.pdf"
+logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"]
+history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
+profile_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"
+filename_mass = "../plots/pdf/55_Msun_high_Z/Kippenhahn_Mass_55_Msun_high_Z.pdf"
+filename_radius = "../plots/pdf/55_Msun_high_Z/Kippenhahn_Radius_55_Msun_high_Z.pdf"
+time_of_He_ZAMS = 5.31
 
-logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"]
-history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
-profile_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"
-filename_mass = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Mass_55_Msun_low_Z.pdf"
-filename_radius = "../plots/pdf/55_Msun_low_Z/pdfKippenhahn_Radius_55_Msun_low_Z.pdf"
+# logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"]
+# history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
+# profile_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"
+# filename_mass = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Mass_55_Msun_low_Z.pdf"
+# filename_radius = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Radius_55_Msun_low_Z.pdf"
+# time_of_He_ZAMS = 5.12
 
 df = pd.read_csv(history_path,  header=4, skiprows=0, delimiter='\s+',usecols=['age','apsidal_constant_k2'])
 
@@ -72,13 +74,22 @@ for i,zone in enumerate(mixing_zones.zones):
     color = ""
     #Convective mixing
     if mixing_zones.mix_types[i] == 1: #convection
-        color = '#332288'
+        color = '#332288' # purple
+    # # ???
+    elif mixing_zones.mix_types[i] == 2: #???
+        color = '#000000' #         
     #Overshooting 
     elif mixing_zones.mix_types[i] == 3: #overshooting
-        color = '#117733'
+        color = '#117733' # green       
     #Semiconvective mixing
     elif mixing_zones.mix_types[i] == 4: #semiconvection
         color = '#CC6677'
+#     # ???
+#     elif mixing_zones.mix_types[i] == 5: #???
+#         color = '#000000' #
+#     # ???
+#     elif mixing_zones.mix_types[i] == 6: #???
+#         color = '#000000' #                    
     else:
         continue
     axis.add_patch(PathPatch(zone, color=color, alpha = 0.5, lw = 0))
@@ -91,10 +102,16 @@ axis.set_ylabel("$m/M_{\odot}$")
 axis.set_xlim(0,max(mixing_zones.x_coords))
 axis.set_ylim(0,max(mixing_zones.y_coords))
 
+plt.axvline(x=time_of_He_ZAMS, color='b', linestyle='--')
+
+# plt.axhline(y=50, color='b', linestyle='-')
+# plt.axhline(y=46, color='b', linestyle='--')
+# plt.axhline(y=41, color='b', linestyle=':')
+
 ax2 = axis.twinx()  # instantiate a second Axes that shares the same x-axis
 # color = '#9F4A54'
 color = 'tab:red'
-ax2.set_ylabel('k$_2$', color=color)  # we already handled the x-label with ax1
+ax2.set_ylabel('k', color=color)  # we already handled the x-label with ax1
 ax2.plot(df['age']*10**-6, df['apsidal_constant_k2'], color=color, lw=2)
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylim([0, 0.025])
@@ -106,6 +123,7 @@ ax2.set_ylim([0, 0.025])
 
 if save_flag:
     plt.savefig(filename_mass, bbox_inches='tight')
+    print(filename_mass)
 # -
 
 
@@ -142,13 +160,22 @@ for i,zone in enumerate(mixing_zones.zones):
     color = ""
     #Convective mixing
     if mixing_zones.mix_types[i] == 1: #convection
-        color = '#332288'
+        color = '#332288' # purple
+    # # ???
+    elif mixing_zones.mix_types[i] == 2: #???
+        color = '#000000' #         
     #Overshooting 
     elif mixing_zones.mix_types[i] == 3: #overshooting
-        color = '#117733'
+        color = '#117733' # green       
     #Semiconvective mixing
     elif mixing_zones.mix_types[i] == 4: #semiconvection
         color = '#CC6677'
+#     # ???
+#     elif mixing_zones.mix_types[i] == 5: #???
+#         color = '#000000' #
+#     # ???
+#     elif mixing_zones.mix_types[i] == 6: #???
+#         color = '#000000' #        
     else:
         continue
     axis.add_patch(PathPatch(zone, color=color, alpha = 0.5, lw = 0))
@@ -162,14 +189,24 @@ axis.set_xlim(0,max(mixing_zones.x_coords))
 axis.set_ylim(0,max(mixing_zones.y_coords))
 # plt.axhline(y=3.2, color='r', linestyle='-')
 
+plt.axvline(x=time_of_He_ZAMS, color='b', linestyle='--')
+
+# plt.axhline(y=3.5, color='b', linestyle='-')
+# plt.axhline(y=7.8, color='b', linestyle='--')
+# plt.axhline(y=8.7, color='b', linestyle=':')
+# plt.axhline(y=2.4, color='b', linestyle='-')
+
 ax2 = axis.twinx()  # instantiate a second Axes that shares the same x-axis
 # color = '#9F4A54'
 # color = '#E8AA14'
 color = 'tab:red'
-ax2.set_ylabel('k$_2$', color=color)  # we already handled the x-label with ax1
+ax2.set_ylabel('k', color=color)  # we already handled the x-label with ax1
 ax2.plot(df['age']*10**-6, df['apsidal_constant_k2'], color=color, lw=2)
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylim([0, 0.025])
 
 if save_flag:
     plt.savefig(filename_radius, bbox_inches='tight')
+    print(filename_radius)
+# -
+

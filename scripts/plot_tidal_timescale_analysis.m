@@ -23,8 +23,8 @@ a_out_stability_Vynatheya_circular   = @(a_in, q_out, i_mut) (2.4*((1+q_out).^(2
 % Choose
 filename            = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR_Tides.mat';
 title_string        = ['$m_1=m_2=55\ M_{\odot},\ P_{\rm{orb}}=1.1\ d,\ Z=0.00035/ \rm{at\ ZAMS}$'];
-plot_label_temp_png = '../plots/png/55_Msun_low_Z/CHE-ZAMS-close-triple-analysis_';
-plot_label_temp_pdf = '../plots/pdf/55_Msun_low_Z/CHE-ZAMS-close-triple-analysis_';    
+plot_label_temp_png = '../plots/png/55_Msun_low_Z/CHE-ZAMS-close-triple-analysis_low_Z_';
+plot_label_temp_pdf = '../plots/pdf/55_Msun_low_Z/CHE-ZAMS-close-triple-analysis_low_Z_';    
 mass_Msun               = 55;
 radius_Rsun             = round(7.577242,2);
 orbital_period_days     = 1.1; 
@@ -32,6 +32,7 @@ orbital_period_days     = 1.1;
 mass_conv_core_Msun     = round(37.805430,2);
 radius_conv_core_Rsun   = 3.5; % Approximate from MESA model, without going into profile
 luminosity_Lsun         = 10^5.632404; % Pending value
+k_2 = 0.024;
 
 % Load
 if debug_flag==true
@@ -47,10 +48,14 @@ tau_sec     = M.tau_sec.*AstroConstants.s_to_yr;
 
 % Calculate extra values
 orbital_period_year = orbital_period_days./AstroConstants.yr_to_d;
-separation_inner_AU = separation_in_AU(orbital_period_year,mass_Msun+mass_Msun);
+separation_inner_AU = separation_in_AU(orbital_period_year,mass_Msun+mass_Msun)
 
-tau_circ_dyn_yr = calculate_timescale_dynamical_tides(mass_Msun, radius_Rsun, separation_inner_AU, mass_Msun)
-tau_circ_equ_yr = calculate_timescale_equilibrium_tides(mass_Msun, mass_conv_core_Msun, radius_Rsun, radius_conv_core_Rsun, luminosity_Lsun, separation_inner_AU, mass_Msun)
+% tau_circ_dyn_yr = calculate_timescale_dynamical_tides(mass_Msun, radius_Rsun, separation_inner_AU, mass_Msun)
+% tau_circ_equ_yr = calculate_timescale_equilibrium_tides(mass_Msun, mass_conv_core_Msun, radius_Rsun, radius_conv_core_Rsun, luminosity_Lsun, separation_inner_AU, mass_Msun)
+
+alpha           = calculate_alpha(mass_Msun, radius_Rsun, separation_inner_AU, mass_Msun, k_2)
+tau_sync_dyn_yr = calculate_timescale_dynamical_tides_sync(mass_Msun, mass_conv_core_Msun, radius_Rsun, radius_conv_core_Rsun, separation_inner_AU, mass_Msun, k_2)
+tau_sync_eq_yr  = calculate_timescale_equilibrium_tides_sync(mass_Msun, mass_conv_core_Msun, radius_Rsun, radius_conv_core_Rsun, luminosity_Lsun, separation_inner_AU, mass_Msun, k_2)
 
 % Create 2D meshgrid
 [X, Y]                          = meshgrid(m3, Pout);
@@ -65,11 +70,12 @@ crit_stability_Vynatheya_P_orb_d   = crit_stability_Vynatheya_P_orb_yr.*AstroCon
 crit_stability_P_orb_d = crit_stability_Vynatheya_P_orb_d;
 
 % Filtering
-idx_dyn_tides = find(tau_sec>=tau_circ_dyn_yr);
-idx_equ_tides = find(tau_sec>=tau_circ_equ_yr);
 
-tau_sec(idx_dyn_tides) = nan;
-tau_sec(idx_equ_tides) = nan;
+% idx_dyn_tides = find(tau_sec>=tau_circ_dyn_yr);
+% idx_equ_tides = find(tau_sec>=tau_circ_equ_yr);
+% 
+% tau_sec(idx_dyn_tides) = nan;
+% tau_sec(idx_equ_tides) = nan;
 
 % e_lim_val = 1-(2*radius_Rsun/(separation_inner_AU.*AstroConstants.AU_to_Rsun));
 % e_lim_tol = 0.01;
@@ -109,7 +115,9 @@ end
 
 sz = 145.0;
 sz2 = 20;
-fs=18;
+fs=21;
+fs2=24;
+chosen_aspect = 1.5;
 
 lines6      = [    0.3010    0.7450    0.9330];
 dark_grey   = 0.3.*[1 1 1];
@@ -134,7 +142,7 @@ cbar = colorbar;
 cbar.FontSize = fs;
 colormap(flip(pink(1000)))
 cbar.Label.Interpreter = 'latex';
-cbar.XTick = [-4:2:4];
+cbar.XTick = [-4:1:4];
 
 if indx_plot == 1
     % secular timescale
@@ -153,7 +161,7 @@ if annotations_flag
     empty_region.EdgeColor = 'none';
     empty_region.FaceColor = light_grey;
     empty_region.HandleVisibility = 'off';
-    text(1.2,600,leveler,'$\tau_{\rm{sec}} > \tau_{\rm{tides}}$','Color','w','Fontsize',fs)
+    text(1.2,550,leveler,'$\tau_{\rm{sec}} > \tau_{\rm{tides}}$','Color','w','Fontsize',fs2)
 end
 
 dummy_ones = ones(size(crit_stability_P_orb_d));
@@ -165,7 +173,8 @@ text(1.2,1.75,leveler,'Dynamically Unstable','Color','w','Fontsize',fs)
 
 ylabel('$P_{\rm{out}}/\rm{d}$')
 xlabel('$m_3/M_{\odot}$')
-pbaspect([2 1 1])
+
+pbaspect([chosen_aspect 1 1])
 ax1 = gca;
 ax1.Layer = 'top';
 ax1.FontSize = fs;
@@ -188,23 +197,96 @@ end
 
 end
 
-function tau_circ_dyn_yr = calculate_timescale_dynamical_tides(M_Msun, R_Rsun, a_AU, M_comp)
+% function tau_circ_dyn_yr = calculate_timescale_dynamical_tides(M_Msun, R_Rsun, a_AU, M_comp)
+% % Based on Hurley, Pols & Tout (2002)
+% % https://ui.adsabs.harvard.edu/abs/2002MNRAS.329..897H/abstract
+% q2 = M_comp./M_Msun;
+% R_AU = R_Rsun.*AstroConstants.Rsun_to_AU;
+% 
+% E_2 = calculate_E_2_Zahn_1975(M_Msun);
+% inv_tau_dyn_circ = (21.0./2).*sqrt((AstroConstants.G_AUMsunyr.*M_Msun./(R_AU.^3))).*q2.*((1+q2).^(11.0/6)).*E_2.*((R_AU/a_AU).^(21.0/2)); % Eq. 41 of Hurley, Pols & Tout (2002)
+% tau_circ_dyn_yr = 1./inv_tau_dyn_circ;
+% end
+
+function tau_sync_eq_yr = calculate_timescale_equilibrium_tides_sync(M_Msun, Mconv_Msun, R_Rsun, Rconv_Rsun, L_Lsun, a_AU, M_comp, k)
+% Based on Hurley, Pols & Tout (2002)
+% https://ui.adsabs.harvard.edu/abs/2002MNRAS.329..897H/abstract
+% Equation (27)
+q2      = M_comp./M_Msun;
+R_AU    = R_Rsun.*AstroConstants.Rsun_to_AU;
+beta_2    = 2*k./3; % Radius of gyration squared, i.e. I = beta*M*R^2
+R_env   = R_Rsun-Rconv_Rsun;
+M_env   = M_Msun-Mconv_Msun;
+t_conv_yr = 0.4311.*(Mconv_Msun.*R_env.*(R_Rsun-0.5.*R_env)./(3.0.*L_Lsun)).^(1.0/3);
+
+list_conv = {'Preece','Rasio'};
+[indx_conv, tf_conv] = listdlg('ListString',list_conv);
+
+if indx_conv==1
+% Following Preece et al. (2022)
+% https://ui.adsabs.harvard.edu/abs/2022ApJ...933...25P/abstract
+% k_over_T = (2.0./21.0).*(f_conv./t_conv_yr).*(Mconv_Msun/M_Msun);
+chosen_metallicity = 0.00042; 
+a = (-0.12*log10(chosen_metallicity))+6.91;
+b = (0.23*log10(chosen_metallicity))-0.5;
+c = (-0.28*log10(chosen_metallicity))+0.07;
+k_over_T_c = ((Rconv_Rsun./R_Rsun).^a).*((Mconv_Msun./M_Msun).^b).*c./t_conv_yr;
+
+elseif indx_conv==2
+% Following Rasio et al. (1996), as presented in Hurley et al. (2002)
+f_conv = 1;
+k_over_T_c = (2.0/21).*(f_conv/t_conv_yr).*(M_env/M_Msun);
+end
+
+k_over_T_c
+inv_tau_sync_eq_yr  = 3.0.*(k_over_T_c).*q2.*q2.*(1/beta_2).*((R_AU/a_AU).^6.0);
+tau_sync_eq_yr      = 1./inv_tau_sync_eq_yr;
+
+end
+
+function tau_sync_dyn_yr = calculate_timescale_dynamical_tides_sync(M_Msun, Mconv_Msun, R_Rsun, Rconv_Rsun, a_AU, M_comp, k)
 % Based on Hurley, Pols & Tout (2002)
 % https://ui.adsabs.harvard.edu/abs/2002MNRAS.329..897H/abstract
 q2 = M_comp./M_Msun;
 R_AU = R_Rsun.*AstroConstants.Rsun_to_AU;
+beta_2 = 2*k./3; % Radius of gyration squared, i.e. I = beta*M*R^2
+E_2 = calculate_E_2(M_Msun, R_Rsun, Rconv_Rsun)
 
-E_2 = calculate_E_2(M_Msun);
+I=beta_2.*M_Msun.*R_Rsun.*R_Rsun
+% sqrt((AstroConstants.G_AUMsunyr.*M_Msun./(R_AU.^3)))
+% Eq. 44 of Hurley, Pols & Tout (2002)
+inv_tau_dyn_sync = (5*(2.0.^(5.0/3))).*sqrt((AstroConstants.G_AUMsunyr.*M_Msun./(R_AU.^3))).*(1./beta_2).*q2.*q2.*((1+q2).^(5.0/6)).*E_2.*((R_AU/a_AU).^(17.0/2));
+tau_sync_dyn_yr = 1./inv_tau_dyn_sync;
 
-inv_tau_dyn_circ = (21.0./2).*sqrt((AstroConstants.G_AUMsunyr.*M_Msun./(R_AU.^3))).*q2.*((1+q2).^(11.0/6)).*E_2.*((R_AU/a_AU).^(21.0/2)); % Eq. 41 of Hurley, Pols & Tout (2002)
-tau_circ_dyn_yr = 1./inv_tau_dyn_circ;
+sqrt((AstroConstants.G_AUMsunyr.*M_Msun./(R_AU.^3)))
 end
 
-function E_2 = calculate_E_2(M_Msun)
+
+function E_2 = calculate_E_2(M_Msun, R_Rsun, Rconv_Rsun)
+
+list_rad = {'Zahn','Yoon','Qin'};
+[indx_rad, tf_rad] = listdlg('ListString',list_rad);
+
+if indx_rad==1
 % Based on Zahn (1975)
 % As implemented in Hurley, Pols & Tout (2002)
 % https://ui.adsabs.harvard.edu/abs/2002MNRAS.329..897H/abstract
-E_2 = 1.592*(10^-9).*(M_Msun.^2.84); % Eq. 43 of Hurley, Pols & Tout (2002)
+E_2 = 1.592*(10^-9).*(M_Msun.^(2.84)); % Eq. 43 of Hurley, Pols & Tout (2002)
+
+elseif indx_rad==2
+% Based on Yoon et al. (2010)
+% https://ui.adsabs.harvard.edu/abs/2010ApJ...725..940Y/abstract
+% Equation (5)
+E_2 = (10.0^-1.37)*(Rconv_Rsun./R_Rsun).^8;
+elseif indx_rad==3
+% Based on Qin et al. (2018)
+% https://ui.adsabs.harvard.edu/abs/2018A%26A...616A..28Q/abstract
+E_2 = (10.0^-0.42)*(Rconv_Rsun./R_Rsun).^7.5;
+end
+
+1.592*(10^-9).*(M_Msun.^(2.84)) % Eq. 43 of Hurley, Pols & Tout (2002)
+(10.0^-1.37)*(Rconv_Rsun./R_Rsun).^8
+(10.0^-0.42)*(Rconv_Rsun./R_Rsun).^7.5
 end
 
 function tau_circ_eq_yr = calculate_timescale_equilibrium_tides(M_Msun, Mconv_Msun, R_Rsun, Rconv_Rsun, L_Lsun, a_AU, M_comp)
@@ -218,12 +300,24 @@ t_conv_yr = 0.4311.*(Mconv_Msun.*Rconv_Rsun.*(R_Rsun-0.5.*Rconv_Rsun)./(3.0.*L_L
 % Following Preece et al. (2022)
 % https://ui.adsabs.harvard.edu/abs/2022ApJ...933...25P/abstract
 % k_over_T = (2.0./21.0).*(f_conv./t_conv_yr).*(Mconv_Msun/M_Msun);
-chosen_metallicity = 0.001; 
+% chosen_metallicity = 0.001; 
+chosen_metallicity = 0.00042; 
 a = (-0.12*log10(chosen_metallicity))+6.91;
 b = (0.23*log10(chosen_metallicity))-0.5;
 c = (-0.28*log10(chosen_metallicity))+0.07;
-k_over_T_c = ((Rconv_Rsun./R_Rsun).^a).*((Mconv_Msun./M_Msun).^b).*c./t_conv_yr;
+k_over_T_c = ((Rconv_Rsun./R_Rsun).^a).*((Mconv_Msun./M_Msun).^b).*c./t_conv_yr
 inv_tau_eq_circ_yr = (21.0./2).*(k_over_T_c).*q2.*(1+q2).*((R_AU/a_AU).^8.0);
 tau_circ_eq_yr = 1./inv_tau_eq_circ_yr;
+
+end
+
+function alpha_equlibrium = calculate_alpha(M_Msun, R_Rsun, a_AU, M_comp, k)
+% Based on Hut 1981
+
+q2 = M_comp./M_Msun;
+R_AU = R_Rsun.*AstroConstants.Rsun_to_AU;
+beta = 2*k./3; % Radius of gyration squared, i.e. I = beta*M*R^2
+
+alpha_equlibrium = (q2./(1+q2)).*(1.0/beta).*(a_AU./R_AU).^2;
 
 end

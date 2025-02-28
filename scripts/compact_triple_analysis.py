@@ -89,6 +89,20 @@ def epsilon_tide(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2):
 def epsilon_oct(m1, m2, a1, a2, e2):
     return (m1-m2)/(m1+m2)* (a1/a2) * e2/(1-e2**2)
 
+# importance of rotation (e.g. Liu, Muñoz and Lai 2015)
+def epsilon_rot(m1, m2, m3, a1, a2, e2, r1, k1, omegas1):
+    # [m1]=[m2]=[m3]=Msun
+    # [a1]=[a2]=au
+    # r1 is the radius of the rotating star
+    # [r1]=au
+    # k1 is the apsidal motion constants of the rotating star
+    # [k1]=[k2]=adim
+    # omegas1 is the spin rate of the rotating star
+    # [omegas1] = yr^-1
+    gravConst = 4*np.pi*np.pi
+    return (m1+m2) * a2**3 * (1-e2**2)**1.5 * k1 * omegas1**2 * r1**5 / (gravConst * a1**5 * m1 * m3)
+
+# function for numerical solving
 def fsolve_bisection(func, a, b, args=(), tolerance=1e-6, max_iterations=100, debug=False):
     cosi_0, ETA, eps_SA1, eps_GR1, eps_Tide1 = args
     """
@@ -289,5 +303,3 @@ def calculate_e_grid(N,Ni, m1, m2, p, r1, r2, rc1, rc2, k1, k2, eps_SA_flag, eps
     p2 = [2*np.pi* ((x*au)**3 / G / msun / (m1+m2))**0.5/day_to_s  for x in a2]
 
     return cos_inc_max_ecc, ecc_grid, eps_SA, eps_GR, eps_Tide, etas, f_merger, m3, p2, tau_sec
-
-# %%
