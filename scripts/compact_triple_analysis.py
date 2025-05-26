@@ -72,7 +72,6 @@ def epsilon_gr(m1, m2, m3, a1, a2, e2):
     rg_over_a1= G*m_bin*msun/c**2/(a1*au)
     return 3 * m_bin*((1-e2**2)**1.5)/m3*(a2/a1)**3 * rg_over_a1
 
-
 # importance of tidal corrections (e.g. Liu, Muñoz and Lai 2015)
 def epsilon_tide(m1, m2, m3, a1, a2, e2, r1, r2, k1, k2):
     # [m1]=[m2]=[m3]=Msun
