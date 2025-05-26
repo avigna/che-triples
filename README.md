@@ -14,7 +14,7 @@ Vigna-Gómez, A. et al. (2025). Prompt Stellar and Binary Black Hole Mergers fro
 
 and
 
-Mangipudi, A. et al. (2022). Extreme eccentricities of triple systems: Analytic results. [arxiv:2205.08703](https://arxiv.org/abs/2205.08703)
+Mangipudi, A. et al. (2022). Extreme eccentricities of triple systems: Analytic results. [doi:10.3847/1538-4357/ac7958](https://iopscience.iop.org/article/10.3847/1538-4357/ac7958) [arxiv:2205.08703](https://arxiv.org/abs/2205.08703)
 
 ## Author Contributions
 Underlying dynamics data provided by Bin Liu.
