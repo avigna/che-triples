@@ -17,7 +17,7 @@ and
 Mangipudi, A. et al. (2022). Extreme eccentricities of triple systems: Analytic results. [doi:10.3847/1538-4357/ac7958](https://iopscience.iop.org/article/10.3847/1538-4357/ac7958) [arxiv:2205.08703](https://arxiv.org/abs/2205.08703)
 
 ## Author Contributions
-Underlying dynamics data provided by Bin Liu.
+Dynamics scripts written by Evgeni Grishin and Alejandro Vigna-Gómez.
 Plotting scripts written by Alejandro Vigna-Gómez. 
 Repository curated by Alejandro Vigna-Gómez. 
 
