@@ -14,7 +14,7 @@ a_out_stability_Vynatheya_circular   = @(a_in, q_out, i_mut) (2.4*((1+q_out).^(2
 
 % DATA
 % Choose metallicity
-list_plot = {'high Z','low Z'};
+list_plot = {'Z =0.0042','Z=0.00042'};
 [indx_plot, tf_plot] = listdlg('ListString',list_plot);
 
 
@@ -133,30 +133,10 @@ leveler = 11;
 lw = 2.5;
 
 % Colors
-lines1 = [0    0.4470    0.7410];
-lines2 = [    0.8500    0.3250    0.0980];
-lines3 = [    0.9290    0.6940    0.1250];
-lines4 = [    0.4940    0.1840    0.5560];
-lines5 = [    0.4660    0.6740    0.1880];
-lines6 = [    0.3010    0.7450    0.9330];
-lines7 = [    0.6350    0.0780    0.1840];
 light_grey   = 0.8.*[1 1 1];
 mid_grey   = 0.5.*[1 1 1];
 dark_grey   = 0.2.*[1 1 1];
-navy = [0 0 128]./255;
-cyan = [0 255 255]./255;
-celadon = [175 213 170]./255;
-mauve = [228 193 249]./255;
-dark_green = [26 40 31]./255;
-% hunter_green = [26 40 31]./255;
-cal_poly_green = [46 83 57]./255;
-asparagus = [103 148 54]./255;
-lilac = [230 215 255]./255;
-wisteria = [188 150 230]./255;
 
-% chosen_color_H_mergers = lines6;
-% chosen_color_He_mergers = wisteria;
-% 
 chosen_color_H_mergers = mid_grey;
 chosen_color_He_mergers = light_grey;
 
@@ -164,15 +144,13 @@ text_x_coord = 1.2;
 
 chosen_aspect   = 1.5;
 step_number     = 11;
+
 % Limits
 xLims           = [1 100];
 xLimsLabels     = {'1','10','100'};
 yLims           = [1 3000];
 yTicksValues    = [1 10 100 1000];
 yLimsLabels     = {'1','10','100','1000'};
-
-% fig = figure;
-% orient(fig,'landscape')
 
 clf
 set(gca,'defaulttextinterpreter','latex')
@@ -187,14 +165,10 @@ cbar.XTick = [0:2:10];
 cbar.Label.String = '$\log_{10} (\tau_{\rm{merge,min}}/\rm{yr})$';
 mm_tau_sec=mesh(X_end_GR, Y_end_GR, log10(tau_ZKL_GW_yr_end'),'HandleVisibility','off');
 scatter(60, 6000, 1, 10,'HandleVisibility','off');
-% scatter(60, 6000, 1, 9,'HandleVisibility','off');
 
 mm_tau_sec.FaceColor = 'flat';
 cbar.FontSize = fs;
-% colormap((pink(step_number)))
-% colormap(slanCM('voltage',step_number))   
 colormap(slanCM('amethyst',step_number))   
-% colormap(flip(slanCM('dense',step_number)))   
 
 
 scatter3(X_HeMS(idx_of_eccentricity_HeMS),Y_HeMS(idx_of_eccentricity_HeMS),leveler-1.*ones(size(X_HeMS(idx_of_eccentricity_HeMS))),sz2,chosen_color_He_mergers,'s','filled','HandleVisibility','off')
@@ -236,7 +210,6 @@ ax1.XTickLabel = xLimsLabels;
 ax1.YTick = yTicksValues;
 ax1.YTickLabel = yLimsLabels;
 ax1.TickLabelInterpreter = 'latex';
-% cbar.Ticks = [3 4 5 6 7 8];
 set(cbar,'TickLabelInterpreter','latex')
 box on
   

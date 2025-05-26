@@ -68,7 +68,7 @@ elseif indx_plot==4
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR.mat';
     plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_low_Z.png';
     plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_low_Z.pdf';
-    title_legend    = '$\rm e)\ ZLK+SA+GR$'    
+    title_legend    = '$\rm d)\ ZLK+SA+GR$'    
 elseif indx_plot==5
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_Tides.mat';    
     plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_Tides_low_Z.png';
@@ -88,7 +88,7 @@ elseif indx_plot==8
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_Tides.mat';    
     plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_Tides_low_Z.png';
     plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-short-range-force-analysis_Tides_low_Z.pdf';
-    title_legend    = '$\rm d)\ ZLK+DA+Tides$'    
+    title_legend    = '$\rm e)\ ZLK+DA+Tides$'    
 elseif indx_plot==9
     filename        = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR_Tides.mat';    
     plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-short-range-force-analysis_SA_GR_Tides_low_Z.png';
