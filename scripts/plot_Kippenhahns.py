@@ -17,19 +17,21 @@ import pandas as pd
 # from scipy.signal import argrelextrema
 
 # +
-logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"]
-history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
-profile_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"
-filename_mass = "../plots/pdf/55_Msun_high_Z/Kippenhahn_Mass_55_Msun_high_Z.pdf"
-filename_radius = "../plots/pdf/55_Msun_high_Z/Kippenhahn_Radius_55_Msun_high_Z.pdf"
-time_of_He_ZAMS = 5.31
+# logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"]
+# history_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/history.data"
+# profile_path = "../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"
+# filename_mass = "../plots/pdf/55_Msun_high_Z/Kippenhahn_Mass_55_Msun_high_Z.pdf"
+# filename_radius = "../plots/pdf/55_Msun_high_Z/Kippenhahn_Radius_55_Msun_high_Z.pdf"
+# time_of_He_ZAMS = 5.31
+# val_skip = 39
 
-# logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"]
-# history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
-# profile_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"
-# filename_mass = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Mass_55_Msun_low_Z.pdf"
-# filename_radius = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Radius_55_Msun_low_Z.pdf"
-# time_of_He_ZAMS = 5.12
+logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"]
+history_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/history.data"
+profile_path = "../data/MESA/00_cat_55_55_1.1d_0.1ZSMC/LOGS1/"
+filename_mass = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Mass_55_Msun_low_Z.pdf"
+filename_radius = "../plots/pdf/55_Msun_low_Z/Kippenhahn_Radius_55_Msun_low_Z.pdf"
+time_of_He_ZAMS = 5.12
+val_skip = 58
 
 df = pd.read_csv(history_path,  header=4, skiprows=0, delimiter='\s+',usecols=['age','apsidal_constant_k2'])
 
@@ -96,7 +98,7 @@ for i,zone in enumerate(mixing_zones.zones):
 # if (xyz_data.Z.size > 0):
 #     CS = plt.contour(xyz_data.X, xyz_data.Y, xyz_data.Z, [0,4,8], colors='k')
 #     plt.clabel(CS, inline=1, fontsize=10)
-axis.plot(mixing_zones.x_coords, mixing_zones.y_coords, 'k', lw=4)
+axis.plot(mixing_zones.x_coords[val_skip:-1], mixing_zones.y_coords[val_skip:-1], 'k', lw=4)
 axis.set_xlabel("t/Myr")
 axis.set_ylabel("$m/M_{\odot}$")
 axis.set_xlim(0,max(mixing_zones.x_coords))
@@ -112,7 +114,7 @@ ax2 = axis.twinx()  # instantiate a second Axes that shares the same x-axis
 # color = '#9F4A54'
 color = 'tab:red'
 ax2.set_ylabel('k', color=color)  # we already handled the x-label with ax1
-ax2.plot(df['age']*10**-6, df['apsidal_constant_k2'], color=color, lw=2)
+ax2.plot(df['age'][val_skip:-1]*10**-6, df['apsidal_constant_k2'][val_skip:-1], color=color, lw=2)
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylim([0, 0.025])
 
@@ -124,11 +126,6 @@ ax2.set_ylim([0, 0.025])
 if save_flag:
     plt.savefig(filename_mass, bbox_inches='tight')
     print(filename_mass)
-# -
-
-
-
-
 # +
 #Reading out mixing regions and data, and plotting independently
 kipp_args = mkipp.Kipp_Args(logs_dirs = logs_DIR, xaxis="star_age", yaxis = "radius")
@@ -182,7 +179,7 @@ for i,zone in enumerate(mixing_zones.zones):
 # if (xyz_data.Z.size > 0):
 #     CS = plt.contour(xyz_data.X, xyz_data.Y, xyz_data.Z, [0,4,8], colors='k')
 #     plt.clabel(CS, inline=1, fontsize=10)
-axis.plot(mixing_zones.x_coords, mixing_zones.y_coords, 'k', lw=4)
+axis.plot(mixing_zones.x_coords[val_skip:-1], mixing_zones.y_coords[val_skip:-1], 'k', lw=4)
 axis.set_xlabel("t/Myr")
 axis.set_ylabel("$r/R_{\odot}$")
 axis.set_xlim(0,max(mixing_zones.x_coords))
@@ -201,12 +198,10 @@ ax2 = axis.twinx()  # instantiate a second Axes that shares the same x-axis
 # color = '#E8AA14'
 color = 'tab:red'
 ax2.set_ylabel('k', color=color)  # we already handled the x-label with ax1
-ax2.plot(df['age']*10**-6, df['apsidal_constant_k2'], color=color, lw=2)
+ax2.plot(df['age'][val_skip:-1]*10**-6, df['apsidal_constant_k2'][val_skip:-1], color=color, lw=2)
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylim([0, 0.025])
 
 if save_flag:
     plt.savefig(filename_radius, bbox_inches='tight')
     print(filename_radius)
-# -
-

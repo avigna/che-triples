@@ -33,8 +33,8 @@ if indx_plot==1
     mass_Msun_end           = round(18.619564,2);
     orbital_period_days_end = round(4.525685,2);    
 
-    plot_label_png          = '../plots/png/CHE-GW-timescale-analysis_high_Z';
-    plot_label_pdf          = '../plots/pdf/CHE-GW-timescale-analysis_high_Z';    
+    plot_label_png          = '../plots/png/55_Msun_high_Z/CHE-GW-timescale-analysis_high_Z';
+    plot_label_pdf          = '../plots/pdf/55_Msun_high_Z/CHE-GW-timescale-analysis_high_Z';    
 elseif indx_plot==2
     filename_ZAMS   = '../data/dynamics/55_Msun_low_Z/triple_Z=0.00035_CHE=1_M1=M2=54.999836_Porb=1.099654_SA_GR_Tides.mat';
     mass_Msun_ZAMS          = round(54.999836,2);
@@ -51,8 +51,8 @@ elseif indx_plot==2
     mass_Msun_end           = round(43.79319230382309,2);
     orbital_period_days_end = round(1.6824947859764587,2);    
 
-    plot_label_png  = '../plots/png/CHE-GW-timescale-analysis_low_Z';
-    plot_label_pdf  = '../plots/pdf/CHE-GW-timescale-analysis_low_Z';    
+    plot_label_png  = '../plots/png/55_Msun_low_Z/CHE-GW-timescale-analysis_low_Z';
+    plot_label_pdf  = '../plots/pdf/55_Msun_low_Z/CHE-GW-timescale-analysis_low_Z';    
 else
     warning("Odd choice.")
 end  
@@ -70,12 +70,11 @@ m3_HeMS                     = M_HeMS.m3;
 Pout_HeMS                   = M_HeMS.p2;
 
 % Load '55+55 CHE' at end
-M_end_GR                    = load(filename_end)
+M_end_GR                    = load(filename_end);
 e_max_end_GR                = M_end_GR.eccs;
 m3_end_GR                   = M_end_GR.m3;
 Pout_end_GR                 = M_end_GR.p2;
 
-M_end_GR.cos_inc
 % Calculate extra values
 orbital_period_year_ZAMS    = orbital_period_days_ZAMS./AstroConstants.yr_to_d;
 separation_inner_AU_ZAMS    = separation_in_AU(orbital_period_year_ZAMS,mass_Msun_ZAMS+mass_Msun_ZAMS);
@@ -87,7 +86,7 @@ orbital_period_year_end     = orbital_period_days_end./AstroConstants.yr_to_d;
 separation_inner_AU_end     = separation_in_AU(orbital_period_year_end,mass_Msun_end+mass_Msun_end);
 
 T_c_s_end                   = calculate_merger_time_circular_binary(separation_inner_AU_end,mass_Msun_end,mass_Msun_end);
-T_c_yr_end                  = T_c_s_end.*AstroConstants.s_to_yr
+T_c_yr_end                  = T_c_s_end.*AstroConstants.s_to_yr;
 
 % Based on eq. 48 of Liu & Lai (2018)
 % https://ui.adsabs.harvard.edu/abs/2018ApJ...863...68L/abstract
@@ -163,8 +162,8 @@ chosen_color_He_mergers = light_grey;
 
 text_x_coord = 1.2;
 
-chosen_aspect = 1.5;
-
+chosen_aspect   = 1.5;
+step_number     = 11;
 % Limits
 xLims           = [1 100];
 xLimsLabels     = {'1','10','100'};
@@ -185,14 +184,18 @@ cbar.Label.Interpreter = 'latex';
 cbar.XTick = [0:2:10];
 
 % GW timescale
-cbar.Label.String = '$\log_{10} (\tau_{\rm{merge}}/\rm{yr})$';
+cbar.Label.String = '$\log_{10} (\tau_{\rm{merge,min}}/\rm{yr})$';
 mm_tau_sec=mesh(X_end_GR, Y_end_GR, log10(tau_ZKL_GW_yr_end'),'HandleVisibility','off');
 scatter(60, 6000, 1, 10,'HandleVisibility','off');
 % scatter(60, 6000, 1, 9,'HandleVisibility','off');
 
 mm_tau_sec.FaceColor = 'flat';
 cbar.FontSize = fs;
-colormap((pink(11)))
+% colormap((pink(step_number)))
+% colormap(slanCM('voltage',step_number))   
+colormap(slanCM('amethyst',step_number))   
+% colormap(flip(slanCM('dense',step_number)))   
+
 
 scatter3(X_HeMS(idx_of_eccentricity_HeMS),Y_HeMS(idx_of_eccentricity_HeMS),leveler-1.*ones(size(X_HeMS(idx_of_eccentricity_HeMS))),sz2,chosen_color_He_mergers,'s','filled','HandleVisibility','off')
 scatter3(X_ZAMS(idx_of_eccentricity_ZAMS),Y_ZAMS(idx_of_eccentricity_ZAMS),leveler.*ones(size(X_ZAMS(idx_of_eccentricity_ZAMS))),sz2,chosen_color_H_mergers,'s','filled','HandleVisibility','off')
@@ -214,7 +217,7 @@ else
     warning("Odd choice.")
 end  
 
-xline(mass_Msun_ZAMS,'--','Color','g','LineWidth',lw)
+xline(mass_Msun_ZAMS,'--','Color','r','LineWidth',lw)
 
 
 legend('$m_3=m_{1,\rm{ZAMS}}$','Location','NorthWest','interpreter','latex','Box','Off')

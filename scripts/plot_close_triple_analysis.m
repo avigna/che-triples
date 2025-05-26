@@ -37,7 +37,7 @@ a_out_stability_Vynatheya_circular    = @(a_in, q_out, i_mut) (2.4*((1+q_out).^(
 % mass_Msun_0_1_Z_SMC = [54.999836, 43.976249, 43.793192, 43.79319230382309]
 % Choose
 list_binary = {'55+55 CHE ZAMS low Z','55+55 CHE HeMS low Z','55+55 CHE end low Z','55+55 CHE ZAMS high Z','55+55 CHE HeMS high Z','55+55 CHE end high Z','TIC 470710327 full','TIC 470710327 GR'};
-[indx_binary, tf_binary] = listdlg('ListString',list_binary);
+[indx_binary, tf_binary] = listdlg('ListString',list_binary)
 
 
 if indx_binary==1
@@ -169,7 +169,7 @@ if debug_flag==true
 end
 
 % PLOT
-list_plot = {'cos(i)|_{e_{max}}','e_max','\eps_{GR}','\eps_{SA}','\eps_{Tide}','\eta','f_merger','\tau_{sec}'};
+list_plot = {'cos(i)|_{e_{max}}','e_max','\eps_{GR}','\eps_{SA}','\eps_{Tide}','\eta','f_merger','\tau_{sec}','empty'};
 [indx_plot, tf_plot] = listdlg('ListString',list_plot);
 
 if indx_plot==1
@@ -196,10 +196,12 @@ elseif indx_plot==7
 elseif indx_plot==8
     plot_label_png = strcat(plot_label_temp_png,'tau_sec.png');
     plot_label_pdf = strcat(plot_label_temp_pdf,'tau_sec.pdf');
+elseif indx_plot==9
+    plot_label_png = strcat(plot_label_temp_png,'empty.png');
+    plot_label_pdf = strcat(plot_label_temp_pdf,'empty.pdf');    
 else
     warning("Odd choice.")
 end  
-
 
 solar=char(9737);
 sz = 145.0;
@@ -244,8 +246,7 @@ if indx_plot == 1
     scatter(10000,10000,sz,-1,'HandleVisibility','off')
     scatter(10000,10000,sz,0,'HandleVisibility','off') 
     empty_region = fill3([1 100 100 1],[10 10 1000 1000 ], -2.*[1 1 1 1],'k');
-    % colormap(flip(slanCM('magma',10)))
-    % colormap(flip(pink))
+    colormap(flip(slanCM('lapaz')))
     cbar.XTick = [-1:0.2:0];
 elseif indx_plot == 2
     % maximum eccentricity
@@ -274,8 +275,12 @@ elseif indx_plot == 4
     mm_SA.FaceColor = 'flat';
     scatter(10000,10000,sz,-extreme_val_colorbar,'HandleVisibility','off')
     scatter(10000,10000,sz,extreme_val_colorbar,'HandleVisibility','off')
-    % colormap(flip(slanCM('vik')))
-    colormap(flip(slanCM('vik',step_number)))    
+    % colormap(flip(slanCM('curl',step_number)))
+    % colormap((slanCM('heat',step_number)))
+    % colormap((slanCM('freeze',step_number)))    
+    % colormap(slanCM('magma',step_number))
+    colormap(flip(slanCM('vik',step_number)))            
+    % cbar.XTick = [-6:1:0];
     cbar.XTick = eps_ticks_color_bar;
 elseif indx_plot == 5
     % epsilon Tides
@@ -289,14 +294,15 @@ elseif indx_plot == 5
     cbar.XTick = eps_ticks_color_bar;    
 elseif indx_plot == 6
     % eta
-    % cbar.Label.String = '$\log_{10} \eta := L_{\rm{in}}/L_{\rm{out}}$';
-    cbar.Label.String = '$\log_{10} \eta$';    
+    cbar.Label.String = '$\log_{10} \eta := L_{\rm{in}}/L_{\rm{out}}$';
+    % cbar.Label.String = '$\log_{10} \eta$';    
     mm_eta=mesh(X, Y, log10(eta'));
     mm_eta.FaceColor = 'flat';
     scatter(10000,10000,sz,-extreme_val_eta,'HandleVisibility','off')
     scatter(10000,10000,sz,extreme_val_eta,'HandleVisibility','off')
-    colormap(flip(slanCM('vik')))    
-    % colormap(flip(slanCM('vik',step_number)))       
+    % colormap(flip(slanCM('vik')))
+    % colormap(flip(slanCM('vik',step_number)))
+    colormap(flip(slanCM('fusion',step_number)))    
 elseif indx_plot == 7
     % f_merger
     cbar.Label.String = '$f_{\rm{merger}}$';
@@ -305,6 +311,7 @@ elseif indx_plot == 7
     scatter(10000,10000,sz,0,'HandleVisibility','off')
     scatter(10000,10000,sz,1,'HandleVisibility','off')    
     cbar.XTick = [0:0.2:1];    
+    colormap(flip(slanCM('savanna')))            
     % colormap(flip(pink(10)))
 elseif indx_plot == 8    
     % secular timescale
@@ -314,8 +321,16 @@ elseif indx_plot == 8
     scatter(10000,10000,sz,-extreme_val_tau,'HandleVisibility','off')
     scatter(10000,10000,sz,extreme_val_tau,'HandleVisibility','off')
     colormap(flip(slanCM('vik')))        
-    colormap(flip(slanCM('vik')))
     cbar.XTick = [-4:2:4];
+elseif indx_plot == 9    
+    % empty
+    cbar.Label.String = '$\rm empty$';
+    % mm_tau_sec=mesh(X, Y, log10(tau_sec'));
+    % mm_tau_sec.FaceColor = 'flat';
+    scatter(10000,10000,sz,-extreme_val_tau,'HandleVisibility','off')
+    scatter(10000,10000,sz,extreme_val_tau,'HandleVisibility','off')
+    colormap(flip(slanCM('vik')))        
+    cbar.XTick = [-4:2:4];    
 else    
     warning("Odd choice.")    
 end
@@ -326,13 +341,10 @@ if annotations_flag
     empty_region.EdgeColor = 'none';
     empty_region.FaceColor = light_grey;
     empty_region.HandleVisibility = 'off';  
-
-    text(16,500,1,'Damped ZLK','Color','w','Fontsize',fs)            
-
     if indx_binary==1 
+        text(16,500,1,'Damped ZLK','Color','w','Fontsize',fs)            
         if indx_plot==1
             text(1.2,500,1,'ZAMS','Color','k','Fontsize',fs)
-
         end
         if indx_plot==7
             text(1.2,500,1,'ZAMS','Color','k','Fontsize',fs)
@@ -340,6 +352,7 @@ if annotations_flag
     end
 
     if indx_binary==2 
+        text(16,500,1,'Damped ZLK','Color','w','Fontsize',fs)            
         if indx_plot==1
             text(1.2,500,1,'5.12 Myr','Color','k','Fontsize',fs)
         end
@@ -347,6 +360,26 @@ if annotations_flag
             text(1.2,500,1,'5.12 Myr','Color','k','Fontsize',fs)
         end
     end    
+
+    if indx_binary==4
+        text(16,500,1,'Damped ZLK','Color','w','Fontsize',fs)            
+        if indx_plot==1
+            text(1.2,500,1,'ZAMS','Color','k','Fontsize',fs)
+        end
+        if indx_plot==7
+            text(1.2,500,1,'ZAMS','Color','k','Fontsize',fs)
+        end
+    end    
+
+    if indx_binary==5 
+        % text(16,500,1,'Damped ZLK','Color','w','Fontsize',fs)            
+        if indx_plot==1
+            text(1.2,500,1,'5.31 Myr','Color','k','Fontsize',fs)
+        end
+        if indx_plot==7
+            text(1.2,500,1,'5.31 Myr','Color','k','Fontsize',fs)
+        end
+    end        
         
     if indx_binary==7 | indx_binary==8
         plot3(m_out_TIC,P_out_TIC,1,'or','MarkerSize',10,'MarkerFaceColor','r')
@@ -356,13 +389,21 @@ if annotations_flag
 
 end
 
-
-dummy_ones = ones(size(crit_stability_P_orb_d));
-unstableRegion = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_stability_P_orb_d)],leveler.*[dummy_ones dummy_ones],dark_grey);
-unstableRegion.EdgeColor = 'none';
-unstableRegion.FaceColor = dark_grey;
-unstableRegion.HandleVisibility = 'off';
-text(text_x_coord,2,leveler+1,'Dynamically Unstable','Color','w','Fontsize',fs)
+if indx_plot == 9
+    dummy_ones = ones(size(crit_stability_P_orb_d));
+    unstableRegion = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_stability_P_orb_d)],leveler.*[dummy_ones dummy_ones],dark_grey);
+    unstableRegion.EdgeColor = 'none';
+    unstableRegion.FaceColor = dark_grey;
+    unstableRegion.HandleVisibility = 'off';
+    text(text_x_coord,2,leveler+1,'Dynamically Unstable','Color','w','Fontsize',fs)
+else
+    dummy_ones = ones(size(crit_stability_P_orb_d));
+    unstableRegion = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_stability_P_orb_d)],leveler.*[dummy_ones dummy_ones],dark_grey);
+    unstableRegion.EdgeColor = 'none';
+    unstableRegion.FaceColor = dark_grey;
+    unstableRegion.HandleVisibility = 'off';
+    text(text_x_coord,2,leveler+1,'Dynamically Unstable','Color','w','Fontsize',fs)
+end
 
 ylabel('$P_{\rm{out}}/\rm{d}$')
 xlabel('$m_3/M_{\odot}$')
