@@ -143,7 +143,7 @@ unstableRegion = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_sta
 unstableRegion.EdgeColor = 'none';
 unstableRegion.FaceColor = dark_grey;
 unstableRegion.HandleVisibility = 'off';
-text(text_x_coord,2,leveler+1,'Dynamically Unstable','Color','w','Fontsize',fs)
+text(text_x_coord,1.75,leveler+1,'Dynamically Unstable','Color','w','Fontsize',fs)
 
 text(1.2,500,leveler, title_legend,'Color',color_title,'Fontsize',fs)
 

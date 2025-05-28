@@ -1,20 +1,11 @@
 #!/usr/bin/env python
-# +
-import mkipp
-import kipp_data
-import mesa_data
+import mkipp # From https://github.com/orlox/mkipp
+import kipp_data # From https://github.com/orlox/mkipp
+import mesa_data # From https://github.com/orlox/mkipp
 import matplotlib.pyplot as plt
 from matplotlib.patches import PathPatch
 import numpy as np
-
-# import random
-# import numpy as np
-# import matplotlib
-# import matplotlib.pyplot as plt
-# from scipy.stats import kde
 import pandas as pd
-# import matplotlib.patches as mpatches
-# from scipy.signal import argrelextrema
 
 # +
 # logs_DIR = ["../data/MESA/00_cat_55_55_1.1d_ZSMC/LOGS1/"]

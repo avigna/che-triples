@@ -130,18 +130,18 @@ if annotations_flag
     text(1.25,300,leveler,'$\tau_{\rm{circ}}=1535\ \rm{yr}$','Color','w','Fontsize',fs2,'Rotation',12.5)
     text(4,62.5,leveler,'$\tau_{\rm{sync}}=23\ \rm{yr}$','Color','k','Fontsize',fs2,'Rotation',12.5)    
     text(18,7.5,leveler,'$\tau_{\rm{aps}}=0.1\ \rm{yr}$','Color','k','Fontsize',fs2,'Rotation',12.5)        
-end
 
-plot3([min(X(idx_tau_dyn_circ')), max(X(idx_tau_dyn_circ'))],[min(Y(idx_tau_dyn_circ')), max(Y(idx_tau_dyn_circ'))],[leveler+1 leveler+1],':w','LineWidth',lw)
-plot3([min(X(idx_tau_dyn_sync')), max(X(idx_tau_dyn_sync'))],[min(Y(idx_tau_dyn_sync')), max(Y(idx_tau_dyn_sync'))],[leveler leveler],'--k','LineWidth',lw)
-plot3([min(X(idx_tau_tide')), max(X(idx_tau_tide'))],[min(Y(idx_tau_tide')), max(Y(idx_tau_tide'))],[leveler-1 leveler-1],'k','LineWidth',lw)
+    plot3([min(X(idx_tau_dyn_circ')), max(X(idx_tau_dyn_circ'))],[min(Y(idx_tau_dyn_circ')), max(Y(idx_tau_dyn_circ'))],[leveler+1 leveler+1],':w','LineWidth',lw)
+    plot3([min(X(idx_tau_dyn_sync')), max(X(idx_tau_dyn_sync'))],[min(Y(idx_tau_dyn_sync')), max(Y(idx_tau_dyn_sync'))],[leveler leveler],'--k','LineWidth',lw)
+    plot3([min(X(idx_tau_tide')), max(X(idx_tau_tide'))],[min(Y(idx_tau_tide')), max(Y(idx_tau_tide'))],[leveler-1 leveler-1],'k','LineWidth',lw)
+end
 
 dummy_ones = ones(size(crit_stability_P_orb_d));
 unstableRegion = fill3([mock_mass fliplr(mock_mass)],[dummy_ones fliplr(crit_stability_P_orb_d)],leveler.*[dummy_ones dummy_ones],dark_grey);
 unstableRegion.EdgeColor = 'none';
 unstableRegion.FaceColor = dark_grey;
 unstableRegion.HandleVisibility = 'off';
-text(1.2,1.75,leveler,'Dynamically Unstable','Color','w','Fontsize',fs)
+text(1.2,2,leveler,'Dynamically Unstable','Color','w','Fontsize',fs)
 
 ylabel('$P_{\rm{out}}/\rm{d}$')
 xlabel('$m_3/M_{\odot}$')

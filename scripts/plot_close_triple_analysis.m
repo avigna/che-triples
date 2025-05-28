@@ -236,7 +236,7 @@ elseif indx_plot == 5
     cbar.XTick = eps_ticks_color_bar;    
 elseif indx_plot == 6
     % eta
-    cbar.Label.String = '$\log_{10} \eta := L_{\rm{in}}/L_{\rm{out}}$';
+    cbar.Label.String = '$\log_{10} (\eta := L_{\rm{in}}/L_{\rm{out}})$';
     mm_eta=mesh(X, Y, log10(eta'));
     mm_eta.FaceColor = 'flat';
     scatter(10000,10000,sz,-extreme_val_eta,'HandleVisibility','off')
