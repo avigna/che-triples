@@ -1,5 +1,5 @@
 # che-triples
-## Prompt Stellar and Binary Black Hole Mergers from Chemically Homogeneous Evolution in Triples
+## Prompt stellar and binary black hole mergers in tight triples: Insights from chemically homogeneous evolution
 
 ## Documentation
 This repository has been developed to store the analysis and plotting scripts used in [Vigna-Gómez et al. 2025](https://arxiv.org/abs/2503.17006).
@@ -10,7 +10,7 @@ Please email your queries to Alejandro Vigna-Gómez (alejandro.vigna.astro@gmail
 ## Acknowledgements
 If you use any scripts in this repo for results presented in a scientific publication, please cite:
 
-Vigna-Gómez, A. et al. (2025). Prompt Stellar and Binary Black Hole Mergers from Chemically Homogeneous Evolution in Triples. [arxiv:2503.17006](https://arxiv.org/abs/2503.17006).
+Vigna-Gómez, A. et al. (2025). Prompt stellar and binary black hole mergers in tight triples: Insights from chemically homogeneous evolution. [doi:10.1051/0004-6361/202554680](https://doi.org/10.1051/0004-6361/202554680) [arxiv:2503.17006](https://arxiv.org/abs/2503.17006).
 
 and
 
